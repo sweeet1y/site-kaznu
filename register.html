@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Регистрация — КазНУ ЦДПО</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Полный сброс позиционирования — страница прокручивается целиком */
+    html, body {
+      min-height: 100%; height: auto;
+      overflow-y: auto !important;
+    }
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: block !important; /* отменяем flex от .login-page */
+      padding: 40px 16px 60px;
+    }
+    .reg-wrap {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      max-width: 1000px;
+      margin: 0 auto;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.28);
+    }
+    .reg-left {
+      background: linear-gradient(160deg, #111827 0%, #1e1b4b 100%);
+      padding: 48px 40px;
+      color: #fff;
+      display: flex; flex-direction: column;
+    }
+    .reg-right {
+      padding: 40px 44px;
+    }
+    .reg-logo {
+      display:flex;align-items:center;gap:10px;
+      font-family:'Sora',sans-serif;font-size:22px;font-weight:800;
+      margin-bottom:36px;
+    }
+    .reg-logo-icon {
+      width:36px;height:36px;background:var(--accent);border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .reg-feature {
+      display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;
+    }
+    .reg-feature-icon {
+      width:38px;height:38px;background:rgba(99,102,241,0.2);border-radius:10px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    }
+    .reg-feature-text {
+      font-size:14px;color:rgba(255,255,255,0.65);line-height:1.55;padding-top:2px;
+    }
+    .field-row { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+    .field-error { font-size:12px;color:var(--danger);margin-top:5px;display:none;font-weight:500; }
+    .form-control.is-error { border-color:var(--danger);box-shadow:0 0 0 3px rgba(239,68,68,.1); }
+    .form-control.is-ok   { border-color:var(--success); }
+    .role-selector { display:flex;gap:10px; }
+    .role-btn {
+      flex:1;padding:12px 6px;border-radius:8px;border:2px solid var(--border);
+      font-size:13px;font-weight:600;color:var(--text-secondary);
+      background:#fff;text-align:center;cursor:pointer;transition:all 0.15s;
+    }
+    .role-btn:hover { border-color:var(--accent);color:var(--accent);background:var(--accent-light); }
+    .role-btn.active { border-color:var(--accent);color:var(--accent);background:var(--accent-light); }
+    .login-btn {
+      width:100%;padding:14px;border-radius:8px;background:var(--accent);
+      color:#fff;font-size:16px;font-weight:700;border:none;cursor:pointer;
+      margin-top:6px;transition:all 0.2s;box-shadow:0 4px 14px rgba(99,102,241,0.4);
+    }
+    .login-btn:hover { background:var(--accent-hover);transform:translateY(-1px); }
+    @media (max-width:760px) {
+      .reg-wrap { grid-template-columns:1fr; }
+      .reg-left  { display:none; }
+      .reg-right { padding:32px 24px; }
+      .field-row { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body data-page="register">
+
+  <div class="reg-wrap">
+
+    <!-- ЛЕВАЯ ПАНЕЛЬ -->
+    <div class="reg-left">
+      <div class="reg-logo">
+        <div class="reg-logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        КазНУ ЦДПО
+      </div>
+      <h2 style="font-family:'Sora',sans-serif;font-size:24px;font-weight:800;margin-bottom:12px">Создайте аккаунт</h2>
+      <p style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.65;margin-bottom:32px">
+        После регистрации вы получите доступ к курсам, заданиям и учебным материалам платформы.
+      </p>
+      <div class="reg-feature">
+        <div class="reg-feature-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(165,180,252,1)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        </div>
+        <div class="reg-feature-text">Логин формируется автоматически: <b style="color:#a5b4fc">Фамилия_Имя</b></div>
+      </div>
+      <div class="reg-feature">
+        <div class="reg-feature-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(165,180,252,1)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 1.16h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 14.92z"/></svg>
+        </div>
+        <div class="reg-feature-text">Телефон — для связи и восстановления доступа</div>
+      </div>
+      <div class="reg-feature">
+        <div class="reg-feature-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(165,180,252,1)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="reg-feature-text">Email — для уведомлений о заданиях и оценках</div>
+      </div>
+      <div class="reg-feature">
+        <div class="reg-feature-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(165,180,252,1)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"/></svg>
+        </div>
+        <div class="reg-feature-text">Вход доступен сразу после регистрации</div>
+      </div>
+    </div>
+
+    <!-- ПРАВАЯ ПАНЕЛЬ: ФОРМА -->
+    <div class="reg-right">
+      <h3 style="font-family:'Sora',sans-serif;font-size:24px;font-weight:800;margin-bottom:4px">Регистрация</h3>
+      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:24px">Заполните все поля для создания аккаунта</p>
+
+      <form id="registerForm" novalidate>
+
+        <!-- Фамилия + Имя -->
+        <div class="field-row">
+          <div class="form-group">
+            <label class="form-label">Фамилия <span style="color:var(--danger)">*</span></label>
+            <input type="text" id="lastNameInput" class="form-control" autocomplete="family-name" oninput="updatePreview()">
+            <div class="field-error" id="lastNameError"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Имя <span style="color:var(--danger)">*</span></label>
+            <input type="text" id="firstNameInput" class="form-control" autocomplete="given-name" oninput="updatePreview()">
+            <div class="field-error" id="firstNameError"></div>
+          </div>
+        </div>
+
+        <!-- Телефон -->
+        <div class="form-group">
+          <label class="form-label">Номер телефона <span style="color:var(--danger)">*</span></label>
+          <input type="tel" id="phoneInput" class="form-control" oninput="formatPhone(this)">
+          <div class="field-error" id="phoneError"></div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label">Электронная почта <span style="color:var(--danger)">*</span></label>
+          <input type="email" id="emailInput" class="form-control">
+          <div class="field-error" id="emailError"></div>
+        </div>
+
+        <!-- Пароли -->
+        <div class="field-row">
+          <div class="form-group">
+            <label class="form-label">Пароль <span style="color:var(--danger)">*</span></label>
+            <input type="password" id="passwordInput" class="form-control" placeholder="Минимум 6 символов">
+            <div class="field-error" id="passwordError"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Повторите пароль <span style="color:var(--danger)">*</span></label>
+            <input type="password" id="password2Input" class="form-control">
+            <div class="field-error" id="password2Error"></div>
+          </div>
+        </div>
+
+        <!-- Роль -->
+        <div class="form-group">
+          <label class="form-label">Я регистрируюсь как</label>
+          <div class="role-selector">
+            <button type="button" class="role-btn active" data-role="student" onclick="onRoleChange('student')">
+              <div style="margin-bottom:5px">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+              </div>
+              Студент
+            </button>
+            <button type="button" class="role-btn" data-role="teacher" onclick="onRoleChange('teacher')">
+              <div style="margin-bottom:5px">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              Преподаватель
+            </button>
+          </div>
+        </div>
+
+        <!-- БЛОК ДЛЯ ПРЕПОДАВАТЕЛЯ: выбор направлений -->
+        <div id="teacherAreasBlock" style="display:none;margin-bottom:20px">
+          <label class="form-label" style="margin-bottom:10px;display:block">
+            Направления преподавания <span style="color:var(--danger)">*</span>
+            <span style="font-weight:400;color:var(--text-muted)"> — выберите один или несколько</span>
+          </label>
+          <div style="border:1.5px solid var(--border);border-radius:10px;padding:12px;max-height:240px;overflow-y:auto;background:#fff">
+            <div style="margin-bottom:8px;display:flex;gap:8px;flex-wrap:wrap">
+              <button type="button" onclick="selectAllAreas(true)" style="padding:4px 12px;font-size:12px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;color:var(--accent)">Выбрать все</button>
+              <button type="button" onclick="selectAllAreas(false)" style="padding:4px 12px;font-size:12px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;color:var(--text-muted)">Снять все</button>
+              <span id="areasCount" style="font-size:12px;color:var(--text-muted);align-self:center">0 выбрано</span>
+            </div>
+            <div id="areasList">
+              <!-- Генерируется JS -->
+            </div>
+          </div>
+          <div class="field-error" id="areasError"></div>
+        </div>
+
+        <button type="submit" class="login-btn">Зарегистрироваться →</button>
+      </form>
+
+      <div style="text-align:center;margin-top:18px;font-size:14px;color:var(--text-secondary)">
+        Уже есть аккаунт? <a href="login.html" style="color:var(--accent);font-weight:700">Войти</a>
+      </div>
+      <div style="text-align:center;margin-top:8px">
+        <a href="index.html" style="font-size:13px;color:var(--text-muted)">← На главную</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    function buildAreasList() {
+      const areas = (typeof TEACHING_AREAS !== 'undefined') ? TEACHING_AREAS : [];
+      const list = document.getElementById('areasList');
+      if (!list) return;
+      list.innerHTML = areas.map((a, i) => `
+        <label style="display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:6px;cursor:pointer;font-size:13px;transition:background 0.1s" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background=''">
+          <input type="checkbox" id="area_${i}" value="${a}" onchange="updateAreasCount()" style="width:16px;height:16px;accent-color:var(--accent);flex-shrink:0">
+          ${a}
+        </label>`).join('');
+    }
+
+    function updateAreasCount() {
+      const count = document.querySelectorAll('#areasList input:checked').length;
+      const el = document.getElementById('areasCount');
+      if (el) el.textContent = count + ' выбрано';
+    }
+
+    function selectAllAreas(val) {
+      document.querySelectorAll('#areasList input[type=checkbox]').forEach(cb => cb.checked = val);
+      updateAreasCount();
+    }
+
+    function onRoleChange(role) {
+      const block = document.getElementById('teacherAreasBlock');
+      if (block) block.style.display = role === 'teacher' ? 'block' : 'none';
+    }
+
+    function getSelectedAreas() {
+      return [...document.querySelectorAll('#areasList input:checked')].map(cb => cb.value);
+    }
+
+    function updatePreview() {}
+    function formatPhone(inp) {
+      let v = inp.value.replace(/\D/g,'');
+      if (v.startsWith('8')) v = '7' + v.slice(1);
+      if (!v.startsWith('7')) v = '7' + v;
+      v = v.slice(0,11);
+      let out = '+7';
+      if (v.length>1) out += ' (' + v.slice(1,4);
+      if (v.length>=4) out += ') ' + v.slice(4,7);
+      if (v.length>=7) out += '-' + v.slice(7,9);
+      if (v.length>=9) out += '-' + v.slice(9,11);
+      inp.value = out;
+    }
+
+    document.addEventListener('DOMContentLoaded', buildAreasList);
+  </script>
+</body>
+</html>

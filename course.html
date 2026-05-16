@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Курс — КазНУ ЦДПО</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Модульные тоглы */
+    .module-header{display:grid;grid-template-columns:52px 1fr auto auto;align-items:center;gap:14px;padding:0 22px;height:72px;cursor:pointer;transition:background .15s}
+    .module-header:hover{background:var(--bg)}
+    .module-num{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:800;flex-shrink:0}
+    .module-header-text{min-width:0}
+    .module-title{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .module-subtitle{font-size:12px;color:var(--text-muted);margin-top:2px}
+    .module-status{display:flex;align-items:center;justify-content:flex-end;min-width:110px}
+    .module-toggle{font-size:11px;color:var(--text-muted);transition:transform .2s;flex-shrink:0;width:18px;text-align:center}
+    .module-header.open .module-toggle{transform:rotate(180deg)}
+
+    /* Строки уроков */
+    .lesson-row{display:flex;align-items:center;gap:14px;padding:12px 22px;border-bottom:1px solid var(--border);transition:background .12s;cursor:pointer}
+    .lesson-row:last-child{border-bottom:none}
+    .lesson-row:hover{background:#fafbfc}
+    .lesson-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .lesson-icon.pdf{background:#fee2e2}
+    .lesson-icon.video{background:#dbeafe}
+    .lesson-icon.quiz{background:var(--warning-light)}
+    .lesson-icon.assignment{background:var(--success-light)}
+    .lesson-icon.text{background:#f0fdf4}
+    .lesson-info{flex:1;min-width:0}
+    .lesson-title{font-size:14px;font-weight:600;margin-bottom:2px}
+    .lesson-meta{font-size:12px;color:var(--text-muted)}
+    .lesson-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;background:#fff}
+    .lesson-check.done{background:var(--success);border-color:var(--success)}
+    .lesson-check.done::after{content:'';width:5px;height:9px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg) translate(-1px,-1px);display:block}
+    .lesson-check:not(.done)::after{display:none}
+
+    /* Тест встроенный */
+    .quiz-inline{background:#fff;border:1px solid var(--border);border-radius:14px;margin:16px 22px;padding:22px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+    .quiz-q-block{background:var(--bg);border-radius:10px;padding:16px;margin-bottom:14px}
+    .quiz-q-text{font-size:15px;font-weight:600;margin-bottom:12px;line-height:1.5}
+    .quiz-option{display:flex;align-items:center;gap:10px;padding:10px 13px;border:2px solid var(--border);border-radius:8px;margin-bottom:7px;cursor:pointer;transition:all .15s;font-size:14px}
+    .quiz-option:hover{border-color:var(--accent);background:var(--accent-light)}
+    .quiz-option.selected{border-color:var(--accent);background:var(--accent-light)}
+    .quiz-option.correct{border-color:var(--success);background:var(--success-light);color:var(--success)}
+    .quiz-option.wrong{border-color:var(--danger);background:var(--danger-light);color:var(--danger)}
+    .quiz-option.reveal-correct{border-color:var(--success);background:var(--success-light);color:var(--success)}
+    .quiz-radio{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0}
+    .quiz-result-bar{padding:16px;border-radius:10px;text-align:center;margin-top:14px}
+
+    /* Задание встроенное */
+    .assignment-inline{background:#fff;border:1px solid var(--border);border-radius:14px;margin:16px 22px;padding:22px}
+
+    /* Боковая панель — прогресс */
+    .progress-list{display:flex;flex-direction:column;gap:6px}
+    .progress-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;cursor:pointer;transition:background .12s}
+    .progress-item:hover{background:var(--bg)}
+    .progress-item.active{background:var(--accent-light);font-weight:600;color:var(--accent)}
+    .progress-dot{width:10px;height:10px;border-radius:50%;background:var(--border);flex-shrink:0}
+    .progress-dot.done{background:var(--success)}
+    .progress-dot.active{background:var(--accent)}
+  </style>
+</head>
+<body data-page="course">
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <span class="sidebar-logo-text">КазНУ ЦДПО</span>
+    </div>
+    <div class="sidebar-user-section">
+      <div class="sidebar-user js-open-profile" style="cursor:pointer">
+        <div class="avatar avatar-purple js-user-avatar">?</div>
+        <div class="sidebar-user-info">
+          <div class="user-name js-user-name">...</div>
+          <div class="user-role js-user-role">Роль</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav"><ul>
+      <li class="nav-label">Навигация</li>
+      <li class="nav-item" onclick="history.back()">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15,18 9,12 15,6"/></svg></span>
+        <span>Назад</span>
+      </li>
+      <li class="nav-item active">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+        <span>Курс</span>
+      </li>
+    </ul></nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span class="logout-text">Выйти</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 id="coursePageTitle">Загрузка...</h1>
+        <p id="coursePageSub">Содержание курса</p>
+      </div>
+      <div class="topbar-right">
+        <div class="notif-btn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="notif-dot"></div>
+        </div>
+        <div class="topbar-user js-open-profile" style="cursor:pointer">
+          <div class="avatar avatar-purple js-user-avatar" style="width:30px;height:30px;font-size:12px">?</div>
+          <div class="topbar-user-info">
+            <div class="t-name js-user-name">Пользователь</div>
+            <div class="t-role js-user-role">Роль</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div id="courseContent">
+      <div style="display:flex;align-items:center;justify-content:center;min-height:300px;color:var(--text-muted)">Загрузка...</div>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+/* =========================================================
+   СТРАНИЦА КУРСА — полностью динамическая
+========================================================= */
+let _course = null;
+let _role   = null;
+let _myId   = null;
+let _lessonDone = {};  // {lessonKey: true}
+
+document.addEventListener('DOMContentLoaded', () => {
+  _role = getRole();
+  if (!_role) { window.location.href = 'login.html'; return; }
+
+  const name = getName();
+  const av   = getAvatar(name);
+  _myId = getCurrentUser()?.login || name;
+
+  document.querySelectorAll('.js-user-name').forEach(el=>el.textContent=name);
+  document.querySelectorAll('.js-user-avatar').forEach(el=>el.textContent=av);
+  document.querySelectorAll('.js-user-role').forEach(el=>el.textContent=roleLabel(_role));
+  updateBell();
+  document.querySelectorAll('.logout-btn').forEach(b=>b.addEventListener('click',logout));
+  document.querySelectorAll('.js-open-profile').forEach(el=>el.addEventListener('click',openProfile));
+
+  // Загружаем прогресс из localStorage
+  const saved = localStorage.getItem(`course_progress_${_myId}`);
+  _lessonDone = saved ? JSON.parse(saved) : {};
+
+  // Ищем курс по ID из URL
+  const params  = new URLSearchParams(window.location.search);
+  const courseId= params.get('id');
+  const courses = getCourses();
+  _course = courseId ? courses.find(c=>c.id===courseId) : courses[0];
+
+  if (!_course) {
+    document.getElementById('courseContent').innerHTML =
+      `<div style="text-align:center;padding:80px 24px">
+        <div style="font-size:52px;margin-bottom:16px">📚</div>
+        <h2 style="font-size:22px;font-weight:700;margin-bottom:10px">Курс не найден</h2>
+        <p style="color:var(--text-secondary);margin-bottom:24px">Возможно, курс был удалён или ссылка неверна.</p>
+        <button onclick="window.location.href='dashboard.html'" class="btn btn-primary">← На главную</button>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('coursePageTitle').textContent = _course.title;
+  document.getElementById('coursePageSub').textContent   = _course.category + (_course.level?' · '+_course.level:'');
+  document.title = _course.title + ' — КазНУ ЦДПО';
+
+  renderCoursePage();
+});
+
+function saveProgress() {
+  localStorage.setItem(`course_progress_${_myId}`, JSON.stringify(_lessonDone));
+  updateProgressBar();
+}
+
+function updateProgressBar() {
+  const prog = _course.program||[];
+  if (!prog.length) return;
+  // Считаем по урокам внутри модулей
+  const totalLessons = prog.reduce((s,m)=>(s+(m.l||1)),0);
+  const done = Object.values(_lessonDone).filter(Boolean).length;
+  const pct  = totalLessons ? Math.round(done/totalLessons*100) : 0;
+  const pb = document.getElementById('courseProgressFill');
+  const pl = document.getElementById('courseProgressLabel');
+  if (pb) pb.style.width = pct+'%';
+  if (pl) pl.textContent = pct+'% завершено';
+}
+
+function renderCoursePage() {
+  const c      = _course;
+  const prog   = c.program || [];
+  const quizzes= getQuizzes().filter(q=>q.courseId===c.id||(q.teacherName===c.teacherLogin&&!q.courseId));
+  const assigns= getAssignments().filter(a=>a.courseId===c.id||(a.teacherName===c.teacherLogin&&!a.courseId));
+  const accentColors=['#6366f1','#818cf8','#a78bfa','#4f46e5','#7c3aed'];
+
+  document.getElementById('courseContent').innerHTML = `
+    <!-- Шапка курса -->
+    <div class="course-hero" style="background:${c.grad||'linear-gradient(160deg,#1a1d2e,#2d1b4e)'}">
+      <div class="course-breadcrumb">
+        <a href="dashboard.html">← Главная</a> / <a href="javascript:history.back()">Мои курсы</a> / ${c.title}
+      </div>
+      <h1>${c.title}</h1>
+      <div class="course-hero-meta">
+        <span>👨‍🏫 ${c.teacher||'—'}</span>
+        ${c.category?`<span>📂 ${c.category}</span>`:''}
+        ${c.level?`<span style="background:rgba(255,255,255,.15);color:#fff;padding:3px 11px;border-radius:20px;font-size:12px;font-weight:600">${c.level}</span>`:''}
+        ${prog.length?`<span>📚 ${prog.length} модулей</span>`:''}
+        ${c.hours?`<span>⏱ ~${c.hours} ч</span>`:''}
+      </div>
+      ${_role==='student'?`
+        <div style="max-width:380px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:7px">
+            <span>Ваш прогресс</span><span id="courseProgressLabel">0% завершено</span>
+          </div>
+          <div class="course-progress-bar">
+            <div id="courseProgressFill" class="course-progress-fill" style="width:0%"></div>
+          </div>
+        </div>`:''}
+    </div>
+
+    <!-- Основной макет -->
+    <div class="course-layout">
+
+      <!-- ЛЕВАЯ ЧАСТЬ: модули + тесты -->
+      <div class="course-modules">
+
+        ${c.desc?`
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-header"><h3>О курсе</h3></div>
+          <div class="card-body">
+            <p style="font-size:15px;color:var(--text-secondary);line-height:1.75;margin:0">${c.desc}</p>
+            ${(c.outcomes||[]).length?`
+              <div style="margin-top:16px">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:10px">Чему вы научитесь</div>
+                ${c.outcomes.map(o=>`<div style="display:flex;gap:10px;margin-bottom:7px;font-size:14px;color:var(--text-secondary)">
+                  <div style="width:20px;height:20px;border-radius:50%;background:var(--success-light);color:var(--success);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:2px">✓</div>
+                  <span>${o}</span></div>`).join('')}
+              </div>`:''}
+          </div>
+        </div>`:''}
+
+        <!-- Программа курса -->
+        ${prog.length ? `<div class="section-title" style="margin-bottom:16px">Программа курса</div>` : ''}
+
+        ${prog.length===0
+          ? `<div class="card"><div style="padding:48px;text-align:center;color:var(--text-muted)">
+              <div style="font-size:40px;margin-bottom:12px;opacity:.3">📋</div>
+              <div style="font-weight:600;margin-bottom:4px">Программа курса ещё не добавлена</div>
+              ${_role==='teacher'?`<button onclick="window.location.href='dashboard.html'" class="btn btn-sm btn-secondary" style="margin-top:12px">Редактировать курс</button>`:'<div style="font-size:13px;margin-top:4px">Преподаватель скоро добавит учебные материалы</div>'}
+            </div></div>`
+          : prog.map((mod, mi) => `
+            <div class="module">
+              <div class="module-header ${mi===0?'open':''}" data-default="${mi===0?'open':''}">
+                <div class="module-num" style="background:${accentColors[mi%accentColors.length]}">${mod.n||mi+1}</div>
+                <div class="module-header-text">
+                  <div class="module-title">${mod.name}</div>
+                  <div class="module-subtitle">${mod.l||0} урок${mod.l===1?'':'ов'} · ${mod.h||'—'} ч</div>
+                </div>
+                <div class="module-status">
+                  <span class="badge badge-muted" id="modstatus_${mi}">Открыт</span>
+                </div>
+                <span class="module-toggle">▼</span>
+              </div>
+              <div class="module-body" ${mi===0?'':'style="display:none"'}>
+                <!-- Заглушка: в реальной системе здесь уроки из БД -->
+                <div class="lesson-row" onclick="toggleLesson('${c.id}_mod${mi}_lesson0')">
+                  <div class="lesson-icon video">🎬</div>
+                  <div class="lesson-info">
+                    <div class="lesson-title">Видеолекция — ${mod.name}</div>
+                    <div class="lesson-meta">Видео · ~${Math.round((mod.h||1)*0.6*10)/10} ч</div>
+                  </div>
+                  <div class="lesson-check ${_lessonDone[c.id+'_mod'+mi+'_lesson0']?'done':''}" id="lc_${c.id}_mod${mi}_lesson0"></div>
+                </div>
+                <div class="lesson-row" onclick="toggleLesson('${c.id}_mod${mi}_lesson1')">
+                  <div class="lesson-icon pdf">📄</div>
+                  <div class="lesson-info">
+                    <div class="lesson-title">Конспект — ${mod.name}</div>
+                    <div class="lesson-meta">PDF · ${Math.ceil((mod.l||2)*3)} страниц</div>
+                  </div>
+                  <div class="lesson-check ${_lessonDone[c.id+'_mod'+mi+'_lesson1']?'done':''}" id="lc_${c.id}_mod${mi}_lesson1"></div>
+                </div>
+                ${_role==='teacher'?`
+                <div style="padding:12px 22px;border-top:1px solid var(--border)">
+                  <button onclick="openUploadMaterial()" class="btn btn-sm btn-secondary">+ Добавить материал</button>
+                </div>`:''}
+              </div>
+            </div>`).join('')
+        }
+
+        <!-- Тесты курса -->
+        ${quizzes.length ? `
+          <div class="section-title" style="margin-top:28px;margin-bottom:16px">Тесты курса (${quizzes.length})</div>
+          ${quizzes.map((q,qi)=>quizBlock(q,qi)).join('')}
+        ` : _role==='student'?'':''}
+
+        <!-- Задания курса -->
+        ${assigns.length ? `
+          <div class="section-title" style="margin-top:28px;margin-bottom:16px">Задания курса (${assigns.length})</div>
+          ${assigns.map((a,ai)=>assignBlock(a,ai)).join('')}
+        ` : ''}
+
+        ${_role==='teacher'?`
+          <div style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap">
+            <button onclick="openTeacherUploadMaterial()" class="btn btn-secondary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Загрузить материал
+            </button>
+            <button onclick="openTeacherCreateAssignment()" class="btn btn-secondary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+              Создать задание
+            </button>
+            <button onclick="openTeacherCreateQuiz()" class="btn btn-primary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Создать тест
+            </button>
+          </div>
+        `:''}\
+
+      </div><!-- /course-modules -->
+
+      <!-- ПРАВАЯ БОКОВАЯ ПАНЕЛЬ -->
+      <div class="course-sidebar-right">
+
+        <!-- Информация -->
+        <div class="course-info-card">
+          <h4>О курсе</h4>
+          <div class="info-list">
+            <div class="info-item"><div class="icon">👨‍🏫</div><div><div class="label">Преподаватель</div><div class="value">${c.teacher||'—'}</div></div></div>
+            ${c.rating?`<div class="info-item"><div class="icon">⭐</div><div><div class="label">Рейтинг</div><div class="value">${c.rating}/5.0</div></div></div>`:''}
+            ${prog.length?`<div class="info-item"><div class="icon">📚</div><div><div class="label">Модули</div><div class="value">${prog.length}</div></div></div>`:''}
+            ${c.hours?`<div class="info-item"><div class="icon">⏱</div><div><div class="label">Длительность</div><div class="value">~${c.hours} ч</div></div></div>`:''}
+            ${c.level?`<div class="info-item"><div class="icon">📊</div><div><div class="label">Уровень</div><div class="value">${c.level}</div></div></div>`:''}
+            <div class="info-item"><div class="icon">🏆</div><div><div class="label">Сертификат</div><div class="value">По завершении</div></div></div>
+          </div>
+        </div>
+
+        <!-- Прогресс студента -->
+        ${_role==='student'&&prog.length?`
+        <div class="course-info-card">
+          <h4>Мой прогресс</h4>
+          <div class="progress-list" style="margin-top:12px">
+            ${prog.map((mod,mi)=>`
+              <div class="progress-item" onclick="scrollToModule(${mi})">
+                <div class="progress-dot ${(_lessonDone[c.id+'_mod'+mi+'_lesson0']&&_lessonDone[c.id+'_mod'+mi+'_lesson1'])?'done':''}"></div>
+                <span style="font-size:13px">${mod.name}</span>
+              </div>`).join('')}
+          </div>
+        </div>`:''}
+
+        ${_role==='student'?`
+        <!-- Объявления -->
+        <div class="course-info-card">
+          <h4>📢 Объявления</h4>
+          <div style="margin-top:12px">
+            <div style="padding:12px;background:var(--accent-light);border-radius:8px;border-left:3px solid var(--accent)">
+              <div style="font-size:13px;font-weight:700;margin-bottom:4px">Добро пожаловать!</div>
+              <div style="font-size:12px;color:var(--text-secondary)">Курс открыт для прохождения. Удачи в обучении!</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:5px">${new Date().toLocaleDateString('ru-RU')}</div>
+            </div>
+          </div>
+        </div>`:''}\
+
+      </div><!-- /course-sidebar-right -->
+    </div>`;
+
+  initModuleToggles();
+  updateProgressBar();
+}
+
+/* ── Отметить урок выполненным ── */
+function toggleLesson(key) {
+  _lessonDone[key] = !_lessonDone[key];
+  const el = document.getElementById('lc_'+key);
+  if (el) el.className = 'lesson-check' + (_lessonDone[key]?' done':'');
+  saveProgress();
+  if (_lessonDone[key]) showToast('Урок отмечен выполненным','success');
+}
+
+function scrollToModule(idx) {
+  const headers = document.querySelectorAll('.module-header');
+  if (headers[idx]) headers[idx].scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ── Блок теста ── */
+function quizBlock(q, qi) {
+  const qCount = (q.questions||[]).length;
+  const savedResult = JSON.parse(localStorage.getItem(`quiz_result_${_myId}_${q.id}`) || 'null');
+
+  if (_role === 'teacher') {
+    return `<div class="card" style="margin-bottom:16px">
+      <div class="card-header">
+        <h3>📋 ${q.title}</h3>
+        <span class="badge ${q.status==='active'?'badge-success':'badge-muted'}">${q.status==='active'?'Активен':'Черновик'}</span>
+      </div>
+      <div class="card-body" style="font-size:14px;color:var(--text-secondary)">
+        ${qCount} вопросов · Лимит: ${q.timeLimit} мин
+      </div>
+    </div>`;
+  }
+
+  if (savedResult) {
+    return `<div class="quiz-inline">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <h3 style="font-size:17px;font-weight:700">📋 ${q.title}</h3>
+        <span class="badge badge-success">✓ Пройден</span>
+      </div>
+      <div class="quiz-result-bar" style="background:${savedResult.pct>=70?'var(--success-light)':'var(--warning-light)'}">
+        <div style="font-size:28px;font-weight:900;color:${savedResult.pct>=70?'var(--success)':'var(--warning)'};font-family:'Sora',sans-serif">${savedResult.pct}%</div>
+        <div style="font-size:15px;font-weight:600;margin-top:4px">${savedResult.pct>=90?'Отлично!':savedResult.pct>=70?'Хорошо!':'Попробуйте ещё раз'}</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">Правильных: ${savedResult.correct} из ${savedResult.total}</div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px">
+        <button onclick="retakeQuiz('${q.id}')" class="btn btn-sm btn-secondary">Пройти заново</button>
+        <button onclick="showQuizAnswers('${q.id}')" class="btn btn-sm btn-primary">Посмотреть ответы</button>
+      </div>
+    </div>`;
+  }
+
+  if (!qCount) {
+    return `<div class="quiz-inline">
+      <h3 style="font-size:17px;font-weight:700;margin-bottom:8px">📋 ${q.title}</h3>
+      <div style="color:var(--text-muted);font-size:14px">В тесте пока нет вопросов</div>
+    </div>`;
+  }
+
+  return `<div class="quiz-inline" id="quiz_${q.id}">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h3 style="font-size:17px;font-weight:700">📋 ${q.title}</h3>
+      <div style="font-size:13px;color:var(--text-muted)">${qCount} вопросов · ${q.timeLimit} мин</div>
+    </div>
+    <div id="quizBody_${q.id}">
+      ${buildQuizQuestions(q)}
+    </div>
+    <button onclick="submitQuiz('${q.id}')" class="btn btn-primary" style="margin-top:14px;width:100%">Проверить ответы</button>
+  </div>`;
+}
+
+function buildQuizQuestions(q) {
+  return (q.questions||[]).map((qq,i) => `
+    <div class="quiz-q-block">
+      <div class="quiz-q-text">${i+1}. ${qq.text}</div>
+      ${(qq.options||[]).map((opt,oi)=>`
+        <div class="quiz-option" id="opt_${q.id}_${i}_${oi}" onclick="selectOption('${q.id}',${i},${oi})">
+          <input type="radio" name="q_${q.id}_${i}" class="quiz-radio" value="${oi}" id="radio_${q.id}_${i}_${oi}">
+          <label for="radio_${q.id}_${i}_${oi}" style="cursor:pointer;flex:1">${opt}</label>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+function selectOption(qid, qIdx, oIdx) {
+  const q = getQuizzes().find(x=>x.id===qid);
+  if (!q) return;
+  const opts = q.questions[qIdx].options||[];
+  opts.forEach((_,oi) => {
+    const el = document.getElementById(`opt_${qid}_${qIdx}_${oi}`);
+    if (el) el.classList.remove('selected');
+    const r = document.getElementById(`radio_${qid}_${qIdx}_${oi}`);
+    if (r) r.checked = false;
+  });
+  const sel = document.getElementById(`opt_${qid}_${qIdx}_${oIdx}`);
+  if (sel) sel.classList.add('selected');
+  const r = document.getElementById(`radio_${qid}_${qIdx}_${oIdx}`);
+  if (r) r.checked = true;
+}
+
+function submitQuiz(qid) {
+  const q = getQuizzes().find(x=>x.id===qid);
+  if (!q) return;
+  const qs = q.questions||[];
+  let correct=0, answered=0;
+
+  qs.forEach((qq,i) => {
+    const selected = document.querySelector(`input[name="q_${qid}_${i}"]:checked`);
+    if (!selected) return;
+    answered++;
+    const oIdx = parseInt(selected.value);
+    const chosenText = qq.options[oIdx];
+    const isRight = (chosenText===qq.correct)||(oIdx===qq.correctIndex);
+
+    qq.options.forEach((_,oi) => {
+      const el = document.getElementById(`opt_${qid}_${i}_${oi}`);
+      if (!el) return;
+      el.style.pointerEvents='none';
+      const isCorrectOpt = (qq.options[oi]===qq.correct)||(oi===qq.correctIndex);
+      if (oi===oIdx && isRight)  el.classList.add('correct');
+      if (oi===oIdx && !isRight) el.classList.add('wrong');
+      if (isCorrectOpt && !isRight) el.classList.add('reveal-correct');
+    });
+    if (isRight) correct++;
+  });
+
+  if (answered < qs.length) { showToast('Ответьте на все вопросы','error'); return; }
+
+  const pct = Math.round(correct/qs.length*100);
+  // Сохраняем результат
+  localStorage.setItem(`quiz_result_${_myId}_${qid}`, JSON.stringify({correct,total:qs.length,pct,date:new Date().toISOString()}));
+
+  // Показываем результат
+  const resHtml = `<div class="quiz-result-bar" style="background:${pct>=70?'var(--success-light)':'var(--warning-light)'}">
+    <div style="font-size:30px;font-weight:900;color:${pct>=70?'var(--success)':'var(--warning)'};font-family:'Sora',sans-serif">${pct}%</div>
+    <div style="font-size:16px;font-weight:700;margin-top:4px">${pct>=90?'🎉 Отлично!':pct>=70?'👍 Хорошо!':'📚 Нужно повторить'}</div>
+    <div style="font-size:14px;color:var(--text-secondary);margin-top:4px">Правильных ответов: ${correct} из ${qs.length}</div>
+  </div>
+  <div style="margin-top:12px;display:flex;gap:10px">
+    <button onclick="retakeQuiz('${qid}')" class="btn btn-sm btn-secondary">Пройти заново</button>
+  </div>`;
+
+  const btn = document.querySelector(`#quiz_${qid} button[onclick="submitQuiz('${qid}')"]`);
+  if (btn) btn.replaceWith(Object.assign(document.createElement('div'), {innerHTML: resHtml}));
+  else document.getElementById(`quiz_${qid}`)?.insertAdjacentHTML('beforeend', resHtml);
+}
+
+function retakeQuiz(qid) {
+  localStorage.removeItem(`quiz_result_${_myId}_${qid}`);
+  renderCoursePage();
+}
+
+function showQuizAnswers(qid) {
+  const q = getQuizzes().find(x=>x.id===qid);
+  if (!q) return;
+  const qs = q.questions||[];
+  openModal(`<div style="background:#fff;border-radius:18px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.22)">
+    <div style="padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <h3 style="font-size:18px;font-weight:700">Ответы: ${q.title}</h3>
+      <button onclick="closeModal()" style="width:28px;height:28px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div style="padding:20px 28px">
+      ${qs.map((qq,i)=>`
+        <div style="margin-bottom:18px">
+          <div style="font-size:15px;font-weight:600;margin-bottom:10px">${i+1}. ${qq.text}</div>
+          ${(qq.options||[]).map((opt,oi)=>{
+            const isCorrect=(opt===qq.correct)||(oi===qq.correctIndex);
+            return`<div style="padding:9px 13px;border-radius:8px;margin-bottom:6px;font-size:14px;
+              background:${isCorrect?'var(--success-light)':'var(--bg)'};
+              color:${isCorrect?'var(--success)':'var(--text-secondary)'};
+              border:1.5px solid ${isCorrect?'var(--success)':'var(--border)'}">
+              ${isCorrect?'✓ ':''} ${opt}
+            </div>`;}).join('')}
+        </div>`).join('')}
+    </div>
+  </div>`);
+}
+
+/* ── Блок задания ── */
+function assignBlock(a, ai) {
+  const subs = getSubmissions();
+  const mySub = subs.find(s=>s.assignmentId===a.id&&s.studentLogin===_myId);
+
+  if (_role==='teacher') {
+    const subCount=subs.filter(s=>s.assignmentId===a.id).length;
+    return `<div class="assignment-inline">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <h3 style="font-size:16px;font-weight:700">📝 ${a.title}</h3>
+        <span class="badge badge-primary">${subCount} сдано</span>
+      </div>
+      <div style="font-size:14px;color:var(--text-secondary);margin-bottom:10px">${a.desc||''}</div>
+      <div style="font-size:13px;color:var(--text-muted)">Срок: ${a.deadline||'—'} · Макс. балл: ${a.maxScore||100}</div>
+    </div>`;
+  }
+
+  return `<div class="assignment-inline">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <h3 style="font-size:16px;font-weight:700">📝 ${a.title}</h3>
+      ${mySub
+        ? `<span class="badge ${mySub.grade!==undefined?'badge-success':'badge-primary'}">${mySub.grade!==undefined?`Оценка: ${mySub.grade}/${a.maxScore}`:'Сдано'}</span>`
+        : `<span class="badge badge-warning">Ожидается</span>`}
+    </div>
+    ${a.desc?`<div style="font-size:14px;color:var(--text-secondary);margin-bottom:10px">${a.desc}</div>`:''}
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Срок сдачи: ${a.deadline||'—'} · Максимум: ${a.maxScore||100} баллов</div>
+    ${!mySub
+      ? `<div>
+          <textarea id="asgn_text_${a.id}" rows="3" style="width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box;resize:vertical;margin-bottom:10px" placeholder="Напишите ответ или описание выполненной работы..."></textarea>
+          <button onclick="submitInlineAssignment('${a.id}','${a.maxScore||100}')" class="btn btn-primary btn-sm">📤 Сдать задание</button>
+        </div>`
+      : `<div style="background:var(--success-light);border-radius:8px;padding:12px;font-size:14px;color:var(--success)">
+          ✓ Работа отправлена. Ждите проверки от преподавателя.
+          ${mySub.grade!==undefined?`<div style="margin-top:6px;font-weight:700">Ваш балл: ${mySub.grade}/${a.maxScore}</div>`:''}
+        </div>`
+    }
+  </div>`;
+}
+
+/* ── Препод: загрузить материал ── */
+function openTeacherUploadMaterial() {
+  openModal(`<div style="background:#fff;border-radius:18px;width:100%;max-width:500px;box-shadow:0 24px 80px rgba(0,0,0,.22)">
+    <div style="padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <h3 style="font-size:17px;font-weight:700">📎 Загрузить материал</h3>
+      <button onclick="closeModal()" style="width:28px;height:28px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div style="padding:24px 28px;display:flex;flex-direction:column;gap:14px">
+      <div><label style="display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--text-secondary)">Название материала *</label>
+        <input id="tm_title" type="text" placeholder="Например: Конспект по теме 1" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box"></div>
+      <div><label style="display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--text-secondary)">Тип</label>
+        <select id="tm_type" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box;appearance:none">
+          <option value="pdf">📄 PDF / Конспект</option>
+          <option value="video">🎬 Видео (ссылка)</option>
+          <option value="link">🔗 Ссылка</option>
+          <option value="text">📝 Текст</option>
+        </select></div>
+      <div><label style="display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--text-secondary)">Ссылка / URL</label>
+        <input id="tm_url" type="url" placeholder="https://..." style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box"></div>
+      <div><label style="display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--text-secondary)">Описание</label>
+        <textarea id="tm_desc" rows="2" placeholder="Краткое описание..." style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box;resize:vertical"></textarea></div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button onclick="saveTeacherMaterial()" class="btn btn-primary" style="flex:1">Добавить материал</button>
+        <button onclick="closeModal()" class="btn btn-secondary">Отмена</button>
+      </div>
+    </div>
+  </div>`);
+}
+function saveTeacherMaterial() {
+  const title = document.getElementById('tm_title')?.value.trim();
+  if (!title) { showToast('Введите название','error'); return; }
+  const mats = JSON.parse(localStorage.getItem('lms_course_materials') || '{}');
+  if (!mats[_course.id]) mats[_course.id] = [];
+  mats[_course.id].push({
+    id: Math.random().toString(36).slice(2,10),
+    title, type: document.getElementById('tm_type')?.value,
+    url: document.getElementById('tm_url')?.value.trim(),
+    desc: document.getElementById('tm_desc')?.value.trim(),
+    addedAt: new Date().toISOString(), addedBy: _myId
+  });
+  localStorage.setItem('lms_course_materials', JSON.stringify(mats));
+  closeModal(); showToast('Материал добавлен','success'); renderCoursePage();
+}
+
+/* ── Препод: создать задание ── */
+function openTeacherCreateAssignment() {
+  openModal(`<div style="background:#fff;border-radius:18px;width:100%;max-width:520px;box-shadow:0 24px 80px rgba(0,0,0,.22)">
+    <div style="padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <h3 style="font-size:17px;font-weight:700">📝 Создать задание</h3>
+      <button onclick="closeModal()" style="width:28px;height:28px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div style="padding:24px 28px;display:flex;flex-direction:column;gap:14px">
+      <div><label style="display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--text-secondary)">Название *</label>
+        <input id="ta_title" type="text" placeholder="Название задания" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box"></div>
+      <div><label style="display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--text-secondary)">Описание / условие *</label>
+        <textarea id="ta_desc" rows="3" placeholder="Опишите задание..." style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box;resize:vertical"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div><label style="display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--text-secondary)">Срок сдачи</label>
+          <input id="ta_deadline" type="date" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box"></div>
+        <div><label style="display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--text-secondary)">Макс. балл</label>
+          <input id="ta_score" type="number" value="100" min="1" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button onclick="saveTeacherAssignment()" class="btn btn-primary" style="flex:1">Создать задание</button>
+        <button onclick="closeModal()" class="btn btn-secondary">Отмена</button>
+      </div>
+    </div>
+  </div>`);
+}
+function saveTeacherAssignment() {
+  const title = document.getElementById('ta_title')?.value.trim();
+  const desc  = document.getElementById('ta_desc')?.value.trim();
+  if (!title || !desc) { showToast('Заполните название и описание','error'); return; }
+  const assigns = getAssignments();
+  assigns.push({
+    id: Math.random().toString(36).slice(2,10),
+    title, desc, courseId: _course.id,
+    teacherName: _myId,
+    deadline: document.getElementById('ta_deadline')?.value || '—',
+    maxScore: parseInt(document.getElementById('ta_score')?.value) || 100,
+    createdAt: new Date().toISOString()
+  });
+  saveAssignments(assigns);
+  closeModal(); showToast('Задание создано','success'); renderCoursePage();
+}
+
+/* ── Препод: создать тест прямо из курса ── */
+function openTeacherCreateQuiz() {
+  window._cqQuestions = [{id:'q1', text:'', type:'single', options:['','','',''], correctIndex:0, correctIndexes:[], correctText:''}];
+  renderCourseQuizModal();
+}
+function renderCourseQuizModal() {
+  const qs = window._cqQuestions;
+  openModal(`<div style="background:#fff;border-radius:18px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.22)">
+    <div style="padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:2">
+      <h3 style="font-size:17px;font-weight:700">📋 Создать тест</h3>
+      <button onclick="closeModal()" style="width:28px;height:28px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div style="padding:24px 28px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+        <div><label style="display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--text-secondary)">Название теста *</label>
+          <input id="cq_title" type="text" placeholder="Название теста" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box"></div>
+        <div><label style="display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--text-secondary)">Лимит времени (мин)</label>
+          <input id="cq_time" type="number" value="30" min="1" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box"></div>
+      </div>
+
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:12px">Вопросы (${qs.length})</div>
+
+      ${qs.map((q,i) => `<div style="border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <span style="font-size:13px;font-weight:700;color:var(--text-muted)">Вопрос ${i+1}</span>
+          <button onclick="cqRemoveQ(${i})" style="border:none;background:transparent;cursor:pointer;color:var(--danger);font-size:18px;line-height:1">✕</button>
+        </div>
+        <div style="margin-bottom:10px">
+          <textarea oninput="window._cqQuestions[${i}].text=this.value" rows="2"
+            placeholder="Текст вопроса..."
+            style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box;resize:vertical">${q.text}</textarea>
+        </div>
+        <div style="margin-bottom:10px">
+          <label style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:6px;display:block">Тип ответа</label>
+          <select onchange="cqChangeType(${i},this.value)"
+            style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;appearance:none">
+            <option value="single" ${q.type==='single'?'selected':''}>Один вариант</option>
+            <option value="multiple" ${q.type==='multiple'?'selected':''}>Несколько вариантов</option>
+            <option value="text" ${q.type==='text'?'selected':''}>Развёрнутый ответ</option>
+          </select>
+        </div>
+        ${q.type==='text'
+          ? `<div style="padding:10px 12px;background:var(--bg);border-radius:8px;font-size:13px;color:var(--text-muted)">
+              Студент введёт текстовый ответ. Вы проверите вручную.
+              <div style="margin-top:8px"><label style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:4px;display:block">Правильный ответ / критерий оценки (для себя)</label>
+              <input type="text" value="${q.correctText||''}" oninput="window._cqQuestions[${i}].correctText=this.value"
+                placeholder="Опорный ответ..."
+                style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;box-sizing:border-box"></div>
+            </div>`
+          : `<div>
+              <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:8px">
+                Варианты · <span style="color:var(--success)">${q.type==='multiple'?'Отметьте все правильные':'Отметьте правильный'}</span>
+              </div>
+              ${(q.options||[]).map((opt,oi)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+                <input type="${q.type==='multiple'?'checkbox':'radio'}" name="cq_correct_${i}"
+                  ${q.type==='multiple'
+                    ? `${(q.correctIndexes||[]).includes(oi)?'checked':''} onchange="cqToggleMulti(${i},${oi},this.checked)"`
+                    : `value="${oi}" ${q.correctIndex===oi?'checked':''} onchange="window._cqQuestions[${i}].correctIndex=${oi}"`}
+                  style="width:16px;height:16px;accent-color:var(--success);flex-shrink:0;cursor:pointer">
+                <input type="text" value="${opt}" oninput="window._cqQuestions[${i}].options[${oi}]=this.value"
+                  placeholder="Вариант ${String.fromCharCode(65+oi)}"
+                  style="flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit">
+                <button onclick="cqRemoveOpt(${i},${oi})" style="border:none;background:transparent;cursor:pointer;color:var(--text-muted);font-size:16px">✕</button>
+              </div>`).join('')}
+              <button onclick="cqAddOpt(${i})"
+                style="padding:6px 12px;border:1.5px dashed var(--border);border-radius:8px;background:transparent;color:var(--text-muted);font-size:13px;cursor:pointer;width:100%;margin-top:4px">
+                + Вариант ответа
+              </button>
+            </div>`
+        }
+      </div>`).join('')}
+
+      <button onclick="cqAddQ()"
+        style="width:100%;padding:11px;border:1.5px dashed var(--border);border-radius:10px;background:transparent;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:20px">
+        + Добавить вопрос
+      </button>
+      <div style="display:flex;gap:10px">
+        <button onclick="saveCourseQuiz()" class="btn btn-primary" style="flex:1">Сохранить тест</button>
+        <button onclick="closeModal()" class="btn btn-secondary">Отмена</button>
+      </div>
+    </div>
+  </div>`);
+}
+function cqAddQ() {
+  window._cqQuestions.push({id:Math.random().toString(36).slice(2,8), text:'', type:'single', options:['','','',''], correctIndex:0, correctIndexes:[], correctText:''});
+  renderCourseQuizModal();
+}
+function cqRemoveQ(i) {
+  window._cqQuestions.splice(i,1);
+  renderCourseQuizModal();
+}
+function cqChangeType(i, type) {
+  window._cqQuestions[i].type = type;
+  renderCourseQuizModal();
+}
+function cqAddOpt(i) {
+  window._cqQuestions[i].options.push('');
+  renderCourseQuizModal();
+}
+function cqRemoveOpt(i, oi) {
+  window._cqQuestions[i].options.splice(oi,1);
+  renderCourseQuizModal();
+}
+function cqToggleMulti(i, oi, checked) {
+  const idxs = window._cqQuestions[i].correctIndexes || [];
+  if (checked) { if (!idxs.includes(oi)) idxs.push(oi); }
+  else { const p=idxs.indexOf(oi); if(p>-1) idxs.splice(p,1); }
+  window._cqQuestions[i].correctIndexes = idxs;
+}
+function saveCourseQuiz() {
+  const title = document.getElementById('cq_title')?.value.trim();
+  if (!title) { showToast('Введите название теста','error'); return; }
+  const qs = window._cqQuestions;
+  if (!qs.length) { showToast('Добавьте хотя бы один вопрос','error'); return; }
+  const quizzes = getQuizzes();
+  quizzes.push({
+    id: Math.random().toString(36).slice(2,10),
+    title, courseId: _course.id,
+    teacherName: _myId,
+    timeLimit: parseInt(document.getElementById('cq_time')?.value) || 30,
+    status: 'active',
+    questions: qs.map(q => ({...q})),
+    createdAt: new Date().toISOString()
+  });
+  saveQuizzes(quizzes);
+  closeModal(); showToast('Тест создан и доступен студентам','success'); renderCoursePage();
+}
+
+function submitInlineAssignment(assignmentId, maxScore) {
+  const text = document.getElementById(`asgn_text_${assignmentId}`)?.value.trim();
+  if (!text) { showToast('Напишите ответ','error'); return; }
+  const subs = getSubmissions();
+  const me = getCurrentUser();
+  subs.push({
+    id: Math.random().toString(36).slice(2,10),
+    assignmentId, courseId: _course?.id,
+    studentName: getName(), studentLogin: _myId,
+    text, submittedAt: new Date().toISOString(),
+  });
+  saveSubmissions(subs);
+  showToast('Работа отправлена преподавателю!','success');
+  renderCoursePage();
+}
+</script>
+</body>
+</html>

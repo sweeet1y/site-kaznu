@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Курсы — КазНУ ЦДПО</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg, #0f0c29 0%, #24243e 50%, #302b63 100%);
+      padding: 80px 0 60px; text-align: center; position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content:''; position:absolute; inset:0;
+      background-image: linear-gradient(rgba(99,102,241,0.07) 1px,transparent 1px),
+                        linear-gradient(90deg,rgba(99,102,241,0.07) 1px,transparent 1px);
+      background-size: 60px 60px;
+    }
+    .page-hero .container { position: relative; z-index:1; }
+    .page-hero h1 { font-family:'Sora',sans-serif; font-size:48px; font-weight:800; color:#fff; margin-bottom:14px; }
+    .page-hero p  { color:rgba(255,255,255,0.65); font-size:18px; max-width:560px; margin:0 auto 30px; line-height:1.65; }
+    .hero-tag { display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,0.18);color:#a5b4fc;border:1px solid rgba(99,102,241,0.3);padding:7px 18px;border-radius:30px;font-size:14px;font-weight:600;margin-bottom:22px; }
+
+    .courses-page { padding: 60px 0 80px; background: #f8f9fb; }
+    .filter-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px; align-items:center; }
+    .filter-btn { padding:8px 18px; border-radius:20px; border:1.5px solid var(--border); background:#fff; font-size:13px; font-weight:600; cursor:pointer; color:var(--text-secondary); transition:all 0.15s; }
+    .filter-btn:hover, .filter-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .search-bar { display:flex; align-items:center; gap:10px; background:#fff; border:1.5px solid var(--border); border-radius:10px; padding:10px 14px; min-width:260px; margin-left:auto; }
+    .search-bar input { border:none; outline:none; font-size:14px; flex:1; font-family:inherit; background:transparent; }
+
+    .all-courses-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:20px; }
+    .course-big-card { background:#fff; border-radius:14px; border:1px solid var(--border); overflow:hidden; transition:all 0.2s; cursor:default; }
+    .course-big-card:hover { border-color:var(--accent); box-shadow:0 8px 32px rgba(99,102,241,0.12); transform:translateY(-3px); }
+    .cbc-thumb { height:120px; display:flex; align-items:center; justify-content:center; position:relative; }
+    .cbc-body { padding:18px 20px; }
+    .cbc-title { font-size:15px; font-weight:700; margin-bottom:6px; line-height:1.4; }
+    .cbc-meta  { font-size:13px; color:var(--text-secondary); margin-bottom:10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .cbc-tags  { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+    .cbc-footer { display:flex; align-items:center; justify-content:space-between; padding-top:12px; border-top:1px solid var(--border); }
+    .price-tag { font-size:15px; font-weight:800; color:var(--accent); }
+
+    .stat-pills { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin-top:24px; }
+    .stat-pill { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:12px 24px; text-align:center; }
+    .stat-pill-n { font-family:'Sora',sans-serif; font-size:26px; font-weight:800; color:#fff; }
+    .stat-pill-l { font-size:12px; color:rgba(255,255,255,0.5); margin-top:2px; }
+
+    .no-results { text-align:center; padding:60px 20px; color:var(--text-muted); display:none; }
+    .results-count { font-size:14px; color:var(--text-muted); margin-bottom:20px; }
+
+    @media(max-width:768px){
+      .page-hero h1 { font-size:32px; }
+      .search-bar { margin-left:0; width:100%; }
+      .all-courses-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body class="landing-page">
+
+  <!-- ШАПКА -->
+  <header class="landing-header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="index.html" class="logo">
+          <div class="logo-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <span class="logo-text">КазНУ ЦДПО</span>
+        </a>
+        <nav class="landing-nav">
+          <a href="index.html">Главная</a>
+          <a href="courses.html" style="color:var(--accent);font-weight:700">Курсы</a>
+          <a href="index.html#about">О центре</a>
+          <a href="index.html#contacts">Контакты</a>
+          <a href="register.html" class="btn btn-secondary" style="padding:9px 20px">Регистрация</a>
+          <a href="login.html" class="btn btn-primary">Войти →</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- ГЕРОЙ -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="hero-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Все программы повышения квалификации
+      </div>
+      <h1>Каталог курсов</h1>
+      <p>72 академических часа · Удостоверение государственного образца · Офлайн и онлайн форматы · от 25 000 ₸</p>
+      <div class="stat-pills">
+        <div class="stat-pill"><div class="stat-pill-n">38</div><div class="stat-pill-l">Направлений</div></div>
+        <div class="stat-pill"><div class="stat-pill-n">72 ч</div><div class="stat-pill-l">На каждый курс</div></div>
+        <div class="stat-pill"><div class="stat-pill-n">2021</div><div class="stat-pill-l">Год основания</div></div>
+        <div class="stat-pill"><div class="stat-pill-n">от 25 000 ₸</div><div class="stat-pill-l">Стоимость</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- КУРСЫ -->
+  <section class="courses-page">
+    <div class="container">
+
+      <!-- ФИЛЬТР + ПОИСК -->
+      <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-cat="all" onclick="filterCat('all',this)">Все (38)</button>
+        <button class="filter-btn" data-cat="ИИ" onclick="filterCat('ИИ',this)">ИИ и нейронные сети</button>
+        <button class="filter-btn" data-cat="МО" onclick="filterCat('МО',this)">Машинное обучение</button>
+        <button class="filter-btn" data-cat="Данные" onclick="filterCat('Данные',this)">Data Science</button>
+        <button class="filter-btn" data-cat="Инженерия" onclick="filterCat('Инженерия',this)">Инженерия и IoT</button>
+        <button class="filter-btn" data-cat="Управление" onclick="filterCat('Управление',this)">Управление и бизнес</button>
+        <div class="search-bar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="courseSearch" placeholder="Поиск по курсам..." oninput="applyFilters()">
+        </div>
+      </div>
+
+      <div class="results-count" id="resultsCount">Показано: 38 курсов</div>
+
+      <div class="all-courses-grid" id="coursesGrid"></div>
+
+      <div class="no-results" id="noResults">
+        <div style="font-size:40px;margin-bottom:12px">🔍</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px">Ничего не найдено</div>
+        <div>Попробуйте другой запрос или сбросьте фильтр</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="background:linear-gradient(135deg,#0f0c29,#302b63);padding:70px 0;text-align:center;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(99,102,241,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.05) 1px,transparent 1px);background-size:60px 60px"></div>
+    <div class="container" style="position:relative;z-index:1">
+      <h2 style="font-family:'Sora',sans-serif;font-size:36px;font-weight:800;color:#fff;margin-bottom:14px">Готовы записаться?</h2>
+      <p style="color:rgba(255,255,255,0.6);font-size:16px;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto">Зарегистрируйтесь и выберите курс. По завершении — удостоверение государственного образца КазНУ.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <a href="register.html" class="btn btn-primary btn-lg" style="font-size:16px;padding:14px 30px">Записаться →</a>
+        <a href="index.html#contacts" class="btn btn-lg" style="font-size:16px;padding:14px 30px;background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.2)">Связаться с нами</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ПОДВАЛ -->
+  <footer class="landing-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="logo" style="margin-bottom:14px">
+            <div class="logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+            <span class="logo-text">КазНУ ЦДПО</span>
+          </div>
+          <p>Центр дополнительного профессионального образования при кафедре ИИ и Big Data КазНУ им. аль-Фараби.</p>
+        </div>
+        <div class="footer-col"><h4>Навигация</h4><ul><li><a href="index.html">Главная</a></li><li><a href="courses.html">Все курсы</a></li><li><a href="index.html#about">О центре</a></li></ul></div>
+        <div class="footer-col"><h4>Аккаунт</h4><ul><li><a href="register.html">Регистрация</a></li><li><a href="login.html">Войти</a></li></ul></div>
+        <div class="footer-col"><h4>Контакты</h4><ul><li><a href="mailto:talshyn.sagdatbek@kaznu.edu.kz">talshyn.sagdatbek@kaznu.edu.kz</a></li><li>+7 (707) 570-36-30</li><li>пр. аль-Фараби 71, Алматы</li></ul></div>
+      </div>
+      <div class="footer-bottom">© 2024 КазНУ ЦДПО — Кафедра ИИ и Big Data. Все права защищены.</div>
+    </div>
+  </footer>
+
+  <script>
+    const COURSES_DATA = [
+      // ИИ и нейронные сети
+      { title:'Основы искусственного интеллекта', cat:'ИИ', level:'Начальный', levelCls:'badge-success', grad:'linear-gradient(135deg,#6366f1,#4338ca)', tags:['ИИ','Введение'], desc:'Алгоритмы поиска, экспертные системы, современные подходы. Без предварительных знаний.' },
+      { title:'Введение в современные интеллектуальные системы', cat:'ИИ', level:'Начальный', levelCls:'badge-success', grad:'linear-gradient(135deg,#6366f1,#818cf8)', tags:['ИИ','Системы'], desc:'Обзор интеллектуальных систем: классификация, архитектура, области применения.' },
+      { title:'Практический ИИ: от теории к прикладным решениям', cat:'ИИ', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#4f46e5,#7c3aed)', tags:['ИИ','Практика'], desc:'Практическое применение ИИ в реальных задачах. Проектный подход.' },
+      { title:'Архитектура и применение интеллектуальных систем', cat:'ИИ', level:'Продвинутый', levelCls:'badge-danger', grad:'linear-gradient(135deg,#3730a3,#1e1b4b)', tags:['ИИ','Архитектура'], desc:'Проектирование интеллектуальных систем, интеграция компонентов, примеры внедрения.' },
+      { title:'Нейронные сети: базовые принципы и архитектуры', cat:'ИИ', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#7c3aed,#5b21b6)', tags:['Нейросети','PyTorch'], desc:'MLP, CNN, RNN — математика и реализация. PyTorch на практике.' },
+      { title:'Искусственный интеллект для профессиональной деятельности', cat:'ИИ', level:'Начальный', levelCls:'badge-success', grad:'linear-gradient(135deg,#6366f1,#4338ca)', tags:['ИИ','Профессионалам'], desc:'Применение ИИ-инструментов в работе специалиста любой отрасли.' },
+      { title:'ИИ в медицине', cat:'ИИ', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#e11d48,#9f1239)', tags:['ИИ','Медицина'], desc:'Диагностика, обработка медицинских изображений, предиктивная аналитика в здравоохранении.' },
+      { title:'ИИ в научных исследованиях', cat:'ИИ', level:'Продвинутый', levelCls:'badge-danger', grad:'linear-gradient(135deg,#6d28d9,#4c1d95)', tags:['ИИ','Наука'], desc:'Применение методов МО и ГО в академических и прикладных исследованиях.' },
+      { title:'Проектирование интеллектуальных решений', cat:'ИИ', level:'Продвинутый', levelCls:'badge-danger', grad:'linear-gradient(135deg,#4338ca,#1e1b4b)', tags:['ИИ','Проектирование'], desc:'Системный подход к разработке интеллектуальных решений: от постановки задачи до деплоя.' },
+      { title:'Архитектура интеллектуальных систем', cat:'ИИ', level:'Продвинутый', levelCls:'badge-danger', grad:'linear-gradient(135deg,#3730a3,#312e81)', tags:['ИИ','Архитектура'], desc:'Проектирование масштабируемых интеллектуальных систем корпоративного класса.' },
+
+      // Машинное обучение
+      { title:'Машинное обучение I', cat:'МО', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#3b82f6,#1d4ed8)', tags:['ML','scikit-learn'], desc:'Классические алгоритмы: регрессия, классификация, кластеризация, деревья решений.' },
+      { title:'Машинное обучение II', cat:'МО', level:'Продвинутый', levelCls:'badge-danger', grad:'linear-gradient(135deg,#2563eb,#1e40af)', tags:['ML','Ансамбли'], desc:'Ансамблевые методы, градиентный бустинг, XGBoost, интерпретируемость моделей.' },
+      { title:'Практическое машинное обучение', cat:'МО', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#1d4ed8,#1e3a8a)', tags:['ML','Практика'], desc:'Полный цикл ML-проекта: от задачи до продакшена. Feature engineering, pipeline, мониторинг.' },
+      { title:'Глубокое обучение', cat:'МО', level:'Продвинутый', levelCls:'badge-danger', grad:'linear-gradient(135deg,#7c3aed,#5b21b6)', tags:['DL','PyTorch'], desc:'CNN, RNN/LSTM, Transformer. PyTorch, transfer learning, обучение на GPU.' },
+      { title:'Генеративный искусственный интеллект: инструменты и сценарии применения', cat:'МО', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#06b6d4,#0e7490)', tags:['GenAI','Диффузия'], desc:'GANs, диффузионные модели, практические инструменты: Stable Diffusion, Midjourney API.' },
+      { title:'Большие языковые модели (LLM): основы и прикладное использование', cat:'МО', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#0891b2,#0369a1)', tags:['LLM','GPT'], desc:'Архитектура LLM, prompt engineering, API OpenAI/Anthropic, создание LLM-приложений.' },
+      { title:'LLM и генеративный ИИ', cat:'МО', level:'Продвинутый', levelCls:'badge-danger', grad:'linear-gradient(135deg,#06b6d4,#0369a1)', tags:['LLM','RAG','LoRA'], desc:'RAG, fine-tuning (LoRA/QLoRA), оценка качества. Qwen, LLaMA, Hugging Face.' },
+      { title:'NLP и анализ текстовых данных', cat:'МО', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#10b981,#047857)', tags:['NLP','BERT','Казахский'], desc:'Токенизация, эмбеддинги, классификация текста, BERT. Казахскоязычные корпусы.' },
+      { title:'MLOps', cat:'МО', level:'Продвинутый', levelCls:'badge-danger', grad:'linear-gradient(135deg,#ec4899,#9d174d)', tags:['MLflow','Docker','CI/CD'], desc:'Пайплайны с MLflow и DVC, контейнеризация, CI/CD для ML, мониторинг в production.' },
+
+      // Data Science
+      { title:'Наука о данных: базовый курс', cat:'Данные', level:'Начальный', levelCls:'badge-success', grad:'linear-gradient(135deg,#f59e0b,#b45309)', tags:['Python','Pandas'], desc:'Python, Pandas, NumPy, Matplotlib. Полный цикл Data Science от сырых данных до отчёта.' },
+      { title:'Data Science для начинающих', cat:'Данные', level:'Начальный', levelCls:'badge-success', grad:'linear-gradient(135deg,#f97316,#c2410c)', tags:['Python','Data'], desc:'Первые шаги в DS: статистика, основы Python, простые модели, визуализация.' },
+      { title:'Прикладная наука о данных и аналитика', cat:'Данные', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#d97706,#92400e)', tags:['Analytics','EDA'], desc:'Прикладной анализ данных: EDA, статистические тесты, дашборды, BI-инструменты.' },
+      { title:'Интеллектуальный анализ данных', cat:'Данные', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#b45309,#7c2d12)', tags:['DM','Кластеризация'], desc:'Data mining: ассоциативные правила, кластеризация, анализ временных рядов.' },
+      { title:'Бизнес-аналитика и data-driven принятие решений', cat:'Данные', level:'Начальный', levelCls:'badge-success', grad:'linear-gradient(135deg,#84cc16,#4d7c0f)', tags:['BI','Excel','Power BI'], desc:'Power BI, Excel-аналитика, KPI-дашборды, принятие решений на основе данных.' },
+      { title:'Основы Data Engineering', cat:'Данные', level:'Начальный', levelCls:'badge-success', grad:'linear-gradient(135deg,#14b8a6,#0f766e)', tags:['ETL','SQL'], desc:'Введение в DE: SQL, хранилища данных, базовые ETL-концепции, форматы хранения.' },
+      { title:'Инженерия данных', cat:'Данные', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#0d9488,#134e4a)', tags:['Airflow','Spark'], desc:'Airflow, Apache Spark, ETL/ELT пайплайны, векторные БД, оркестрация данных.' },
+      { title:'Цифровые двойники', cat:'Данные', level:'Продвинутый', levelCls:'badge-danger', grad:'linear-gradient(135deg,#0ea5e9,#0369a1)', tags:['Digital Twin','IoT'], desc:'Концепция цифровых двойников, моделирование, интеграция с IoT и ML-системами.' },
+
+      // Инженерия и IoT
+      { title:'Основы программирования', cat:'Инженерия', level:'Начальный', levelCls:'badge-success', grad:'linear-gradient(135deg,#667eea,#764ba2)', tags:['Python','C++'], desc:'Введение в программирование: алгоритмы, переменные, циклы, функции.' },
+      { title:'Основы IoT', cat:'Инженерия', level:'Начальный', levelCls:'badge-success', grad:'linear-gradient(135deg,#22c55e,#15803d)', tags:['IoT','Arduino'], desc:'Интернет вещей: архитектура, протоколы, сенсоры, базовые проекты на Arduino/ESP32.' },
+      { title:'Промышленный IoT', cat:'Инженерия', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#16a34a,#14532d)', tags:['IIoT','MQTT'], desc:'Промышленные IoT-системы: MQTT, OPC-UA, интеграция с SCADA, кибербезопасность.' },
+      { title:'Основы SCADA-систем', cat:'Инженерия', level:'Начальный', levelCls:'badge-success', grad:'linear-gradient(135deg,#f97316,#7c2d12)', tags:['SCADA','ПЛК'], desc:'Системы диспетчерского управления: архитектура SCADA, ПЛК, HMI, промышленные протоколы.' },
+      { title:'Инженерное моделирование и проектирование', cat:'Инженерия', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#64748b,#1e293b)', tags:['CAD','MATLAB'], desc:'Математическое и инженерное моделирование: MATLAB, Simulink, системы CAD.' },
+      { title:'Основы облачных вычислений', cat:'Инженерия', level:'Начальный', levelCls:'badge-success', grad:'linear-gradient(135deg,#0ea5e9,#075985)', tags:['AWS','Azure'], desc:'Облачные платформы AWS/Azure/GCP: виртуальные машины, хранилища, основы DevOps.' },
+      { title:'DevOps-практики', cat:'Инженерия', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#475569,#1e293b)', tags:['Docker','CI/CD','Git'], desc:'Git, Docker, Kubernetes, CI/CD (GitLab, GitHub Actions). Инфраструктура как код.' },
+      { title:'Разработка web-приложений', cat:'Инженерия', level:'Начальный', levelCls:'badge-success', grad:'linear-gradient(135deg,#6366f1,#4338ca)', tags:['HTML','JS','React'], desc:'HTML, CSS, JavaScript, React. Создание полноценных веб-приложений с нуля.' },
+      { title:'Low code/no code разработка', cat:'Инженерия', level:'Начальный', levelCls:'badge-success', grad:'linear-gradient(135deg,#8b5cf6,#6d28d9)', tags:['No-code','Bubble'], desc:'Разработка без кода: Bubble, Zapier, n8n, автоматизация бизнес-процессов.' },
+
+      // Управление и бизнес
+      { title:'Управление IT-проектами', cat:'Управление', level:'Средний', levelCls:'badge-warning', grad:'linear-gradient(135deg,#a16207,#78350f)', tags:['Agile','Scrum','Jira'], desc:'Agile, Scrum, Kanban. Управление командами, оценка рисков, инструменты: Jira, Confluence.' },
+      { title:'Основы устойчивого развития и ESG', cat:'Управление', level:'Начальный', levelCls:'badge-success', grad:'linear-gradient(135deg,#15803d,#064e3b)', tags:['ESG','Устойчивость'], desc:'Принципы ESG, цели устойчивого развития ООН, цифровые технологии в устойчивом бизнесе.' },
+    ];
+
+    let activeCat = 'all';
+
+    function renderCourses() {
+      const q = (document.getElementById('courseSearch')?.value||'').toLowerCase();
+      const grid = document.getElementById('coursesGrid');
+      const noRes = document.getElementById('noResults');
+      const counter = document.getElementById('resultsCount');
+
+      const filtered = COURSES_DATA.filter(c => {
+        const catOk = activeCat === 'all' || c.cat === activeCat;
+        const qOk = !q || c.title.toLowerCase().includes(q) || c.tags.some(t=>t.toLowerCase().includes(q)) || c.desc.toLowerCase().includes(q);
+        return catOk && qOk;
+      });
+
+      counter.textContent = `Показано: ${filtered.length} курсов`;
+      noRes.style.display = filtered.length === 0 ? 'block' : 'none';
+
+      grid.innerHTML = filtered.map(c => `
+        <div class="course-big-card">
+          <div class="cbc-thumb" style="background:${c.grad}">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <div class="cbc-body">
+            <div class="cbc-tags">
+              <span class="badge badge-primary" style="font-size:11px">${catLabel(c.cat)}</span>
+              <span class="badge ${c.levelCls}" style="font-size:11px">${c.level}</span>
+            </div>
+            <div class="cbc-title">${c.title}</div>
+            <div class="cbc-meta">
+              <span>72 ак. ч.</span><span>·</span><span>КазНУ им. аль-Фараби</span>
+            </div>
+            <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:14px">${c.desc}</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+              ${c.tags.map(t=>`<span style="padding:3px 10px;background:var(--bg);border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--text-secondary)">${t}</span>`).join('')}
+            </div>
+            <div class="cbc-footer">
+              <span class="price-tag">от 25 000 ₸</span>
+              <a href="register.html" class="btn btn-sm btn-primary">Записаться →</a>
+            </div>
+          </div>
+        </div>`).join('');
+    }
+
+    function catLabel(cat) {
+      return {ИИ:'ИИ и нейросети', МО:'Машинное обучение', Данные:'Data Science', Инженерия:'Инженерия и IoT', Управление:'Управление'}[cat]||cat;
+    }
+
+    function filterCat(cat, btn) {
+      activeCat = cat;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCourses();
+    }
+
+    function applyFilters() { renderCourses(); }
+
+    document.addEventListener('DOMContentLoaded', renderCourses);
+  </script>
+</body>
+</html>

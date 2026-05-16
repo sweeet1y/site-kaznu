@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Панель управления — EduFlow</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .admin-page {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #111827 0%, #1e1b4b 100%);
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    .admin-box {
+      background: #fff; border-radius: 20px;
+      padding: 52px 48px; width: 100%; max-width: 440px;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+    }
+    .field-error { font-size: 13px; color: var(--danger); margin-top: 6px; display: none; font-weight: 500; }
+    .form-control.is-error { border-color: var(--danger); box-shadow: 0 0 0 4px rgba(239,68,68,0.1); }
+    .form-control.is-ok   { border-color: var(--success); }
+    .admin-warning {
+      background: #fef3c7; border: 1px solid #fbbf24; border-radius: 10px;
+      padding: 13px 16px; font-size: 14px; color: #92400e; margin-top: 18px;
+      display: flex; gap: 8px; align-items: flex-start; line-height: 1.5;
+    }
+  </style>
+</head>
+<body class="admin-page" data-page="login">
+
+  <div class="admin-box">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:26px">
+      <div class="logo-icon" style="width:42px;height:42px;font-size:20px">⚡</div>
+      <span style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800">КазНУ ЦДПО</span>
+    </div>
+
+    <div style="display:inline-flex;align-items:center;gap:8px;background:#fef3c7;color:#92400e;padding:5px 14px;border-radius:20px;font-size:14px;font-weight:700;margin-bottom:20px">
+      🛡️ Панель администратора
+    </div>
+
+    <h3 style="font-family:'Sora',sans-serif;font-size:26px;font-weight:800;margin-bottom:6px">Вход для администратора</h3>
+    <p style="font-size:15px;color:var(--text-secondary);margin-bottom:30px">Доступ только для авторизованного персонала</p>
+
+    <form id="loginForm" novalidate>
+      <input type="hidden" id="hiddenRole" value="admin">
+
+      <div class="form-group">
+        <label class="form-label">Логин</label>
+        <input type="text" id="loginInput" class="form-control"
+          placeholder="admin" autocomplete="username">
+        <div class="field-error" id="loginError"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Пароль</label>
+        <input type="password" id="passwordInput" class="form-control"
+          placeholder="••••••" autocomplete="current-password">
+        <div class="field-error" id="passwordError"></div>
+      </div>
+
+      <button type="submit" class="login-btn">Войти →</button>
+    </form>
+
+    <div class="admin-warning">
+      <span>⚠️</span>
+      <span>Несанкционированный доступ запрещён. Все попытки входа регистрируются.</span>
+    </div>
+
+    <div style="text-align:center;margin-top:22px">
+      <a href="index.html" style="font-size:14px;color:var(--text-muted)">← На главную</a>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

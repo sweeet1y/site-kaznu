@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>КазНУ ЦДПО — Центр дополнительного профессионального образования</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Тёмный герой ── */
+    .hero-dark {
+      min-height: 100vh; padding: 120px 0 80px;
+      background: linear-gradient(135deg, #0f0c29 0%, #24243e 50%, #302b63 100%);
+      display: flex; align-items: center; position: relative; overflow: hidden;
+    }
+    .hero-dark::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(99,102,241,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.07) 1px,transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-glow { position:absolute;border-radius:50%;filter:blur(80px);opacity:.22;pointer-events:none; }
+    .hg1{width:500px;height:500px;background:#6366f1;top:-100px;right:10%;}
+    .hg2{width:380px;height:380px;background:#7c3aed;bottom:-80px;left:5%;}
+    .hg3{width:280px;height:280px;background:#06b6d4;top:30%;right:25%;}
+
+    .hero-dark .container { position:relative;z-index:1;text-align:center; }
+    .hero-tag {
+      display:inline-flex;align-items:center;gap:8px;
+      background:rgba(99,102,241,0.18);color:#a5b4fc;
+      border:1px solid rgba(99,102,241,0.3);
+      padding:7px 18px;border-radius:30px;font-size:14px;font-weight:600;margin-bottom:28px;
+    }
+    .hero-dark .hero-title { color:#fff;font-size:72px;line-height:1.08;margin-bottom:22px; }
+    .hero-dark .hero-subtitle { color:rgba(255,255,255,0.65);font-size:19px;line-height:1.7;max-width:600px;margin:0 auto 44px; }
+    .hero-btns { display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:60px; }
+    .btn-ghost-white {
+      background:rgba(255,255,255,0.08);color:#fff;
+      border:1.5px solid rgba(255,255,255,0.22);backdrop-filter:blur(8px);
+    }
+    .btn-ghost-white:hover { background:rgba(255,255,255,0.14);border-color:rgba(255,255,255,0.4); }
+    .stat-strip {
+      display:flex;justify-content:center;
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:16px;overflow:hidden;max-width:980px;margin:0 auto;
+    }
+    .stat-cell {
+      flex:1;padding:26px 24px;text-align:center;
+      border-right:1px solid rgba(255,255,255,0.08);
+      min-width:0;
+    }
+    .stat-cell:last-child { border-right:none; }
+    .stat-cell-num { font-family:'Sora',sans-serif;font-size:30px;font-weight:800;color:#fff;display:block;white-space:nowrap; }
+    .stat-cell-num.price { font-size:24px; }
+    .stat-cell-lbl { font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;font-weight:500; }
+
+    /* ── Секция "Как это работает" — стиль из примера ── */
+    .how-section { padding: 90px 0; background: #fff; }
+    .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .how-card {
+      background: #fff;
+      border: 1px solid #ebebf0;
+      border-radius: 14px;
+      padding: 36px 32px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s;
+      cursor: default;
+    }
+    .how-card:hover {
+      border-color: transparent;
+      box-shadow: 0 8px 40px rgba(99,102,241,0.13), 0 2px 8px rgba(0,0,0,0.06);
+      transform: translateY(-3px);
+    }
+    .how-card::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, #6366f1, #818cf8);
+      opacity: 0;
+      transition: opacity 0.25s;
+      border-radius: 0 2px 2px 0;
+    }
+    .how-card:hover::before { opacity: 1; }
+    .how-card-num {
+      position: absolute; right: 20px; top: 14px;
+      font-family: 'Sora', sans-serif; font-size: 72px; font-weight: 900;
+      color: rgba(0,0,0,0.04); line-height: 1; user-select: none; pointer-events: none;
+    }
+    .how-card-icon {
+      width: 48px; height: 48px; background: #f3f4f8; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px; color: #6366f1;
+    }
+    .how-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; color: #111827; }
+    .how-card p  { font-size: 14px; color: #6b7280; line-height: 1.75; }
+
+    /* ── Секция курсов ── */
+    .courses-section { padding: 90px 0; background: #f8f9fb; }
+    .course-card { cursor: pointer; }
+    .course-card:hover { transform: translateY(-4px); box-shadow: var(--card-shadow-hover); }
+    .course-thumb { overflow: hidden; }
+
+    /* ── Секция возможностей — горизонтальные строки ── */
+    .features-section-v2 { padding: 90px 0; background: #fff; }
+    .features-list { display: flex; flex-direction: column; gap: 0; }
+    .feature-row {
+      display: grid; grid-template-columns: 56px 1fr;
+      gap: 20px; padding: 28px 0;
+      border-bottom: 1px solid #f0f0f4;
+      align-items: flex-start; transition: all 0.2s;
+    }
+    .feature-row:last-child { border-bottom: none; }
+    .feature-row:hover .feat-icon-box { background: var(--accent); }
+    .feature-row:hover .feat-icon-box svg { stroke: #fff; }
+    .feat-icon-box {
+      width: 48px; height: 48px; border-radius: 12px; background: #f3f4f8;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s; color: #6366f1; flex-shrink: 0;
+    }
+    .feat-icon-box svg { transition: stroke 0.2s; }
+    .feature-row h3 { font-size: 16px; font-weight: 700; margin-bottom: 5px; }
+    .feature-row p  { font-size: 14px; color: #6b7280; line-height: 1.7; margin: 0; }
+    .features-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 60px; }
+
+    /* ── CTA ── */
+    .cta-dark {
+      padding: 100px 0;
+      background: linear-gradient(135deg, #0f0c29 0%, #24243e 50%, #302b63 100%);
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-dark::before {
+      content:'';position:absolute;inset:0;
+      background-image:linear-gradient(rgba(99,102,241,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.05) 1px,transparent 1px);
+      background-size:60px 60px;
+    }
+    .cta-dark .container { position:relative;z-index:1; }
+
+    /* ── Модал курса ── */
+    .course-overlay {
+      position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);
+      display:flex;align-items:center;justify-content:center;padding:24px;
+      opacity:0;pointer-events:none;transition:opacity 0.22s;
+    }
+    .course-overlay.open { opacity:1;pointer-events:all; }
+    .course-modal { background:#fff;border-radius:20px;width:100%;max-width:660px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.22);transform:translateY(24px);transition:transform 0.22s; }
+    .course-overlay.open .course-modal { transform:translateY(0); }
+    .cm-thumb { height:180px;display:flex;align-items:center;justify-content:center;position:relative; }
+    .cm-close { position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.9);border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.12);transition:all 0.15s; }
+    .cm-close:hover{background:#fff;transform:scale(1.1);}
+    .cm-body { padding:28px 32px 36px; }
+    .cm-meta-row { display:flex;flex-wrap:wrap;gap:14px;margin:12px 0 20px; }
+    .cm-meta { display:flex;align-items:center;gap:6px;font-size:14px;color:var(--text-secondary); }
+    .cm-section { margin-bottom:22px; }
+    .cm-section h4 { font-size:15px;font-weight:700;margin-bottom:10px; }
+    .cm-section p { font-size:14px;color:var(--text-secondary);line-height:1.7; }
+    .outcome-item { display:flex;gap:10px;font-size:14px;color:var(--text-secondary);margin-bottom:8px;line-height:1.6; }
+    .outcome-dot { width:20px;height:20px;border-radius:50%;background:var(--success-light);color:var(--success);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px; }
+    .prog-pill { display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:10px;font-size:14px;margin-bottom:8px; }
+    .prog-n { width:24px;height:24px;border-radius:6px;background:var(--accent);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    .cm-enroll { display:flex;align-items:center;justify-content:space-between;padding:18px 20px;background:var(--accent-light);border-radius:12px;margin-top:24px; }
+    .cm-enroll b { display:block;font-size:15px;color:var(--text-primary);margin-bottom:3px; }
+    .cm-enroll p { font-size:13px;color:var(--text-secondary);margin:0; }
+
+    @media (max-width:768px) {
+      .hero-dark .hero-title { font-size:42px; }
+      .how-grid { grid-template-columns:1fr; }
+      .features-two-col { grid-template-columns:1fr; }
+      .stat-strip { flex-direction:column; }
+    }
+  </style>
+</head>
+<body class="landing-page">
+
+  <!-- ШАПКА -->
+  <header class="landing-header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="index.html" class="logo">
+          <div class="logo-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <span class="logo-text">КазНУ ЦДПО</span>
+        </a>
+        <nav class="landing-nav">
+          <a href="#courses">Курсы</a>
+          <a href="#about">О центре</a>
+          <a href="#how">Как это работает</a>
+          <a href="#contacts">Контакты</a>
+          <a href="events.html" style="color:#a78bfa;font-weight:700;position:relative">Мероприятия<span style="position:absolute;top:-4px;right:-8px;width:7px;height:7px;background:#f43f5e;border-radius:50%;"></span></a>
+          <a href="register.html" class="btn btn-secondary" style="padding:9px 20px">Регистрация</a>
+          <a href="login.html" class="btn btn-primary">Войти →</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- ГЕРОЙ -->
+  <section class="hero-dark">
+    <div class="hero-glow hg1"></div>
+    <div class="hero-glow hg2"></div>
+    <div class="hero-glow hg3"></div>
+    <div class="container">
+      <div class="hero-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+        Кафедра ИИ и Big Data · КазНУ им. аль-Фараби
+      </div>
+      <h1 class="hero-title gradient-text" style="-webkit-text-fill-color:unset;background:none;color:#fff">
+        Повышение квалификации<br><span class="gradient-text">в области ИИ и IT</span>
+      </h1>
+      <p class="hero-subtitle">Центр дополнительного профессионального образования при кафедре искусственного интеллекта и Big Data. Курсы по МО, NLP, LLM, MLOps и смежным направлениям с удостоверением государственного образца.</p>
+      <div class="hero-btns">
+        <a href="register.html" class="btn btn-primary btn-lg" style="font-size:17px;padding:16px 34px">Записаться на курс →</a>
+        <a href="#courses" class="btn btn-lg btn-ghost-white" style="font-size:17px;padding:16px 34px">Смотреть курсы ↓</a>
+      </div>
+      <div class="stat-strip">
+        <div class="stat-cell"><span class="stat-cell-num">38</span><div class="stat-cell-lbl">Направлений обучения</div></div>
+        <div class="stat-cell"><span class="stat-cell-num">72 ч</span><div class="stat-cell-lbl">Академических часов на курс</div></div>
+        <div class="stat-cell"><span class="stat-cell-num">2021 г.</span><div class="stat-cell-lbl">Год основания центра</div></div>
+        <div class="stat-cell"><span class="stat-cell-num price">от 25 000 ₸</span><div class="stat-cell-lbl">Стоимость курсов</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- КУРСЫ — ПЕРЕХОД НА ОТДЕЛЬНУЮ СТРАНИЦУ -->
+  <section style="padding:80px 0;background:#f8f9fb" id="courses">
+    <div class="container">
+      <div class="section-header">
+        <h2>Курсы повышения квалификации</h2>
+        <p>38 направлений · 72 академических часа · Удостоверение государственного образца</p>
+      </div>
+      <!-- Превью 3 популярных курса -->
+      <div class="courses-grid" style="margin-bottom:40px">
+        <div class="course-card" onclick="window.location.href='courses.html'">
+          <div class="course-thumb purple">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          </div>
+          <div class="course-info">
+            <span class="badge badge-primary" style="margin-bottom:10px">ИИ / МО</span>
+            <h3>Основы искусственного интеллекта</h3>
+            <div class="course-meta"><span>Кафедра ИИ и Big Data</span><span>·</span><span>⭐ 4.9</span></div>
+            <div class="course-footer"><span class="course-students">120 слушателей</span><span class="badge badge-success">Начальный</span></div>
+          </div>
+        </div>
+        <div class="course-card" onclick="window.location.href='courses.html'">
+          <div class="course-thumb" style="background:linear-gradient(135deg,#06b6d4,#0369a1)">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M22 2l-5 5"/><path d="M17 2h5v5"/></svg>
+          </div>
+          <div class="course-info">
+            <span class="badge badge-primary" style="margin-bottom:10px">ИИ / МО</span>
+            <h3>LLM и генеративный ИИ</h3>
+            <div class="course-meta"><span>Кафедра ИИ и Big Data</span><span>·</span><span>⭐ 5.0</span></div>
+            <div class="course-footer"><span class="course-students">76 слушателей</span><span class="badge badge-danger">Продвинутый</span></div>
+          </div>
+        </div>
+        <div class="course-card" onclick="window.location.href='courses.html'">
+          <div class="course-thumb green">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="course-info">
+            <span class="badge badge-primary" style="margin-bottom:10px">NLP</span>
+            <h3>NLP и анализ текстовых данных</h3>
+            <div class="course-meta"><span>Кафедра ИИ и Big Data</span><span>·</span><span>⭐ 4.9</span></div>
+            <div class="course-footer"><span class="course-students">67 слушателей</span><span class="badge badge-warning">Средний</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- CTA на полный каталог -->
+      <div style="text-align:center;padding:36px;background:linear-gradient(135deg,#f8f9fb,#eff0ff);border-radius:20px;border:1.5px solid rgba(99,102,241,0.15)">
+        <div style="font-size:28px;margin-bottom:12px">📚</div>
+        <h3 style="font-size:20px;font-weight:700;margin-bottom:10px">Все 38 направлений обучения</h3>
+        <p style="color:var(--text-secondary);font-size:15px;margin-bottom:20px;max-width:480px;margin-left:auto;margin-right:auto">ИИ, машинное обучение, NLP, MLOps, Data Science, IoT, SCADA, DevOps и многое другое. 72 академических часа на каждый курс.</p>
+        <a href="courses.html" class="btn btn-primary" style="font-size:16px;padding:13px 32px">Смотреть все курсы →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- О ЦЕНТРЕ -->
+  <section class="features-section-v2" id="about" style="background:#fff">
+    <div class="container">
+      <div class="section-header"><h2>О Центре дополнительного профессионального образования</h2><p>Структурное подразделение при кафедре ИИ и Big Data · КазНУ им. аль-Фараби · Основан в 2021 году</p></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start">
+        <div>
+          <div class="features-list">
+            <div class="feature-row">
+              <div class="feat-icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+              <div><h3>Удостоверение государственного образца</h3><p>По завершении курса слушатели получают официальное удостоверение о повышении квалификации, признаваемое работодателями Казахстана.</p></div>
+            </div>
+            <div class="feature-row">
+              <div class="feat-icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+              <div><h3>38+ направлений обучения</h3><p>ИИ, МО, NLP, LLM, MLOps, Data Science, IoT, SCADA, облачные технологии, DevOps, ИИ в медицине и образовании.</p></div>
+            </div>
+            <div class="feature-row">
+              <div class="feat-icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+              <div><h3>Офлайн и онлайн форматы</h3><p>Очные занятия в кампусе КазНУ и дистанционный формат — выбирайте удобный способ обучения.</p></div>
+            </div>
+            <div class="feature-row">
+              <div class="feat-icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10z"/></svg></div>
+              <div><h3>Трёхязычное обучение</h3><p>Поддержка казахского, русского и английского языков во всех программах.</p></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="background:linear-gradient(135deg,#0f0c29,#302b63);border-radius:20px;padding:36px;color:#fff">
+            <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(165,180,252,0.7);margin-bottom:20px">Стоимость и форматы</div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div style="padding:16px;background:rgba(255,255,255,0.06);border-radius:12px;border:1px solid rgba(255,255,255,0.1)">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                  <div style="font-size:14px;font-weight:700">Курсы повышения квалификации</div>
+                  <div style="font-size:18px;font-weight:800;color:#a5b4fc">от 25 000 ₸</div>
+                </div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.5)">72 академических часа · от 2 недель</div>
+              </div>
+              <div style="padding:16px;background:rgba(255,255,255,0.06);border-radius:12px;border:1px solid rgba(255,255,255,0.1)">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                  <div style="font-size:14px;font-weight:700">Летние / зимние школы</div>
+                  <div style="font-size:18px;font-weight:800;color:#a5b4fc">от 10 000 ₸</div>
+                </div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.5)">Интенсивный формат</div>
+              </div>
+              <div style="padding:16px;background:rgba(255,255,255,0.06);border-radius:12px;border:1px solid rgba(255,255,255,0.1)">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                  <div style="font-size:14px;font-weight:700">Онлайн-конференции</div>
+                  <div style="font-size:18px;font-weight:800;color:#a5b4fc">от 10 000 ₸</div>
+                </div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.5)">Дистанционно · PDF-сборник</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- КАК ЭТО РАБОТАЕТ -->
+  <section class="how-section" id="how" style="background:#f8f9fb">
+    <div class="container">
+      <div class="section-header"><h2>Как это работает</h2><p>Три шага до начала обучения</p></div>
+      <div class="how-grid">
+
+        <div class="how-card">
+          <div class="how-card-num">01</div>
+          <div class="how-card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          </div>
+          <h3>Зарегистрируйтесь</h3>
+          <p>Создайте аккаунт за минуту. Укажите имя, телефон и почту — ваш логин формируется автоматически по формуле Фамилия_Имя.</p>
+        </div>
+
+        <div class="how-card">
+          <div class="how-card-num">02</div>
+          <div class="how-card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <h3>Выберите курс</h3>
+          <p>Изучите каталог, ознакомьтесь с программой каждого курса и запишитесь на подходящую программу обучения.</p>
+        </div>
+
+        <div class="how-card">
+          <div class="how-card-num">03</div>
+          <div class="how-card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+          </div>
+          <h3>Учитесь и получайте сертификат</h3>
+          <p>Проходите модули, сдавайте задания и тесты, отслеживайте прогресс и получите сертификат по завершении.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- КОНТАКТЫ -->
+  <section class="how-section" id="contacts" style="background:#f8f9fb">
+    <div class="container">
+      <div class="section-header"><h2>Контакты</h2><p>Центр дополнительного профессионального образования при кафедре ИИ и Big Data</p></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+        <div class="how-card">
+          <div class="how-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <h3>Адрес</h3>
+          <p>г. Алматы, проспект аль-Фараби 71, факультет информационных технологий и искусственного интеллекта КазНУ</p>
+        </div>
+        <div class="how-card">
+          <div class="how-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.92 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+          <h3>Телефон</h3>
+          <p>+7 (707) 570-36-30<br><span style="font-size:13px;color:var(--text-muted)">Сагдатбек Талшын (руководитель)</span></p>
+        </div>
+        <div class="how-card">
+          <div class="how-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <h3>Email</h3>
+          <p><a href="mailto:talshyn.sagdatbek@kaznu.edu.kz" style="color:var(--accent)">talshyn.sagdatbek@kaznu.edu.kz</a><br><a href="mailto:sarsembayeva.talshyn@gmail.com" style="color:var(--text-secondary);font-size:13px">sarsembayeva.talshyn@gmail.com</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-dark">
+    <div class="container">
+      <div style="max-width:600px;margin:0 auto">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,0.2);color:#a5b4fc;padding:6px 16px;border-radius:20px;font-size:14px;font-weight:600;margin-bottom:28px;border:1px solid rgba(99,102,241,0.3)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+          Запишитесь на курс сегодня
+        </div>
+        <h2 style="font-family:'Sora',sans-serif;font-size:44px;font-weight:800;color:#fff;margin-bottom:16px;line-height:1.18">Повысьте квалификацию<br>в области ИИ и IT</h2>
+        <p style="color:rgba(255,255,255,0.6);font-size:17px;margin-bottom:40px;line-height:1.7">Зарегистрируйтесь и запишитесь на интересующий курс. По завершении получите удостоверение государственного образца от КазНУ им. аль-Фараби.</p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+          <a href="register.html" class="btn btn-primary btn-lg" style="font-size:17px;padding:16px 32px">Записаться на курс →</a>
+          <a href="login.html" class="btn btn-lg btn-ghost-white" style="font-size:17px;padding:16px 32px">Войти в личный кабинет</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ПОДВАЛ -->
+  <footer class="landing-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="logo" style="margin-bottom:14px">
+            <div class="logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+            <span class="logo-text">КазНУ ЦДПО</span>
+          </div>
+          <p>Центр дополнительного профессионального образования при кафедре ИИ и Big Data КазНУ им. аль-Фараби. Основан в 2021 году.</p>
+        </div>
+        <div class="footer-col"><h4>Навигация</h4><ul><li><a href="#courses">Курсы</a></li><li><a href="events.html">Мероприятия</a></li><li><a href="#about">О центре</a></li><li><a href="#how">Как это работает</a></li><li><a href="#contacts">Контакты</a></li></ul></div>
+        <div class="footer-col"><h4>Аккаунт</h4><ul><li><a href="register.html">Регистрация</a></li><li><a href="login.html">Войти</a></li></ul></div>
+        <div class="footer-col"><h4>Контакты</h4><ul><li><a href="mailto:talshyn.sagdatbek@kaznu.edu.kz">talshyn.sagdatbek@kaznu.edu.kz</a></li><li><a href="tel:+77075703630">+7 (707) 570-36-30</a></li><li>пр. аль-Фараби 71, Алматы</li></ul></div>
+      </div>
+      <div class="footer-bottom">© 2024 КазНУ ЦДПО — Кафедра ИИ и Big Data. Все права защищены.<span style="margin:0 10px;opacity:0.25">·</span><a href="admin-login.html" style="color:rgba(255,255,255,0.1);font-size:12px">Панель управления</a></div>
+    </div>
+  </footer>
+
+  <!-- МОДАЛЬНОЕ ОКНО КУРСА -->
+  <div class="course-overlay" id="courseOverlay" onclick="closeCourseModal(event)">
+    <div class="course-modal" id="courseModalBox"></div>
+  </div>
+
+  <script>
+    const COURSES = {
+      ai:{icon:`<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.4" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>`,
+        grad:'linear-gradient(135deg,#6366f1,#4338ca)',title:'Основы искусственного интеллекта',badge:'ИИ / МО',level:'Начальный',bc:'badge-success',teacher:'Кафедра ИИ и Big Data',rating:'4.9',students:'120',hours:'72',modules:6,lessons:34,
+        desc:'Фундаментальный курс: история ИИ, алгоритмы поиска, машинное обучение, нейронные сети и практические применения. Подходит для начинающих.',
+        outcomes:['Понимать ключевые парадигмы ИИ','Применять алгоритмы поиска','Строить простые экспертные системы','Оценивать применимость ИИ в задачах'],
+        program:[{n:1,name:'История и парадигмы ИИ',meta:'5 уроков · 10 ч'},{n:2,name:'Алгоритмы поиска',meta:'6 уроков · 12 ч'},{n:3,name:'Логика и знания',meta:'5 уроков · 11 ч'},{n:4,name:'МО: обзор',meta:'6 уроков · 14 ч'},{n:5,name:'Нейронные сети: введение',meta:'6 уроков · 14 ч'},{n:6,name:'Применение на практике',meta:'6 уроков · 11 ч'}]},
+      ml:{icon:`<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M17.5 14v7M14 17.5h7"/></svg>`,
+        grad:'linear-gradient(135deg,#3b82f6,#1d4ed8)',title:'Машинное обучение I',badge:'ИИ / МО',level:'Средний',bc:'badge-warning',teacher:'Кафедра ИИ и Big Data',rating:'4.8',students:'88',hours:'72',modules:5,lessons:28,
+        desc:'Классические алгоритмы МО: регрессия, классификация, деревья решений, SVM. Реализация на scikit-learn с математическим обоснованием.',
+        outcomes:['Применять алгоритмы классификации и регрессии','Оценивать качество моделей','Выполнять feature engineering','Выбирать алгоритм под задачу'],
+        program:[{n:1,name:'Линейные модели',meta:'6 уроков · 14 ч'},{n:2,name:'Деревья и ансамбли',meta:'6 уроков · 14 ч'},{n:3,name:'SVM и KNN',meta:'5 уроков · 12 ч'},{n:4,name:'Кластеризация',meta:'5 уроков · 14 ч'},{n:5,name:'Оценка моделей и проект',meta:'6 уроков · 18 ч'}]},
+      llm:{icon:`<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M22 2l-5 5"/><path d="M17 2h5v5"/></svg>`,
+        grad:'linear-gradient(135deg,#06b6d4,#0369a1)',title:'LLM и генеративный ИИ',badge:'ИИ / МО',level:'Продвинутый',bc:'badge-danger',teacher:'Кафедра ИИ и Big Data',rating:'5.0',students:'76',hours:'72',modules:5,lessons:26,
+        desc:'Архитектура LLM, prompt engineering, RAG, fine-tuning через LoRA/QLoRA, оценка качества. Работа с Qwen, LLaMA, Hugging Face.',
+        outcomes:['Применять prompt engineering системно','Строить RAG-пайплайны','Дообучать LLM через LoRA/QLoRA','Оценивать качество генерации'],
+        program:[{n:1,name:'Архитектура Transformer и LLM',meta:'5 уроков · 14 ч'},{n:2,name:'Prompt Engineering',meta:'5 уроков · 13 ч'},{n:3,name:'RAG-пайплайны',meta:'5 уроков · 14 ч'},{n:4,name:'Fine-tuning: LoRA и QLoRA',meta:'6 уроков · 17 ч'},{n:5,name:'Оценка и деплой LLM',meta:'5 уроков · 14 ч'}]},
+      nlp:{icon:`<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+        grad:'linear-gradient(135deg,#10b981,#047857)',title:'NLP и анализ текстовых данных',badge:'NLP',level:'Средний',bc:'badge-warning',teacher:'Кафедра ИИ и Big Data',rating:'4.9',students:'67',hours:'72',modules:6,lessons:30,
+        desc:'Полный курс NLP: токенизация, эмбеддинги (Word2Vec, fastText), классификация текста, BERT и работа с казахскоязычными данными.',
+        outcomes:['Предобрабатывать и токенизировать тексты','Строить и обучать эмбеддинги','Применять BERT к задачам NLP','Работать с казахскоязычными корпусами'],
+        program:[{n:1,name:'Основы NLP и предобработка',meta:'5 уроков · 11 ч'},{n:2,name:'Word2Vec, fastText, GloVe',meta:'5 уроков · 12 ч'},{n:3,name:'Классификация текста',meta:'5 уроков · 13 ч'},{n:4,name:'Seq2Seq и генерация',meta:'5 уроков · 13 ч'},{n:5,name:'BERT и Transformer-модели',meta:'5 уроков · 13 ч'},{n:6,name:'Казахский NLP: практика',meta:'5 уроков · 10 ч'}]},
+      ds:{icon:`<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>`,
+        grad:'linear-gradient(135deg,#f59e0b,#b45309)',title:'Наука о данных: базовый курс',badge:'Наука о данных',level:'Начальный',bc:'badge-success',teacher:'Кафедра ИИ и Big Data',rating:'4.7',students:'145',hours:'72',modules:5,lessons:32,
+        desc:'Полный цикл Data Science: сбор, очистка, анализ и визуализация данных. Python, Pandas, Matplotlib, Seaborn и основы статистики.',
+        outcomes:['Загружать и очищать реальные датасеты','Выполнять EDA и статистический анализ','Строить интерактивные визуализации','Оформлять аналитические отчёты'],
+        program:[{n:1,name:'Python для Data Science',meta:'6 уроков · 13 ч'},{n:2,name:'Pandas и NumPy',meta:'7 уроков · 16 ч'},{n:3,name:'Очистка данных',meta:'6 уроков · 14 ч'},{n:4,name:'Визуализация',meta:'7 уроков · 16 ч'},{n:5,name:'Итоговый проект',meta:'6 уроков · 13 ч'}]},
+      mlops:{icon:`<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="16,3 21,3 21,8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21,16 21,21 16,21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>`,
+        grad:'linear-gradient(135deg,#ec4899,#9d174d)',title:'MLOps',badge:'MLOps',level:'Продвинутый',bc:'badge-danger',teacher:'Кафедра ИИ и Big Data',rating:'4.7',students:'39',hours:'72',modules:5,lessons:24,
+        desc:'MLOps на практике: CI/CD для ML, MLflow, DVC, Docker, Kubernetes, мониторинг моделей и автоматизация пайплайнов обучения и деплоя.',
+        outcomes:['Строить ML-пайплайны с MLflow и DVC','Контейнеризировать модели с Docker','Настраивать CI/CD для ML-проектов','Мониторить качество моделей в production'],
+        program:[{n:1,name:'Введение в MLOps и MLflow',meta:'5 уроков · 14 ч'},{n:2,name:'Версионирование с DVC',meta:'5 уроков · 14 ч'},{n:3,name:'Docker и контейнеризация',meta:'5 уроков · 14 ч'},{n:4,name:'CI/CD и автоматизация',meta:'5 уроков · 16 ч'},{n:5,name:'Мониторинг и проект',meta:'4 урока · 14 ч'}]},
+    };
+
+    function openCourse(id) {
+      const c=COURSES[id], box=document.getElementById('courseModalBox');
+      box.innerHTML=`<div class="cm-thumb" style="background:${c.grad}">${c.icon}<button class="cm-close" onclick="document.getElementById('courseOverlay').classList.remove('open')">✕</button></div>
+      <div class="cm-body">
+        <div style="display:flex;gap:8px;margin-bottom:8px"><span class="badge badge-primary">${c.badge}</span><span class="badge ${c.bc}">${c.level}</span></div>
+        <h2 style="font-family:'Sora',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px">${c.title}</h2>
+        <div class="cm-meta-row">
+          <div class="cm-meta">${c.teacher}</div>
+          <div class="cm-meta">⭐ ${c.rating}</div>
+          <div class="cm-meta">${c.students} студентов</div>
+          <div class="cm-meta">${c.hours} ч</div>
+          <div class="cm-meta">${c.modules} модулей · ${c.lessons} уроков</div>
+        </div>
+        <div class="cm-section"><h4>О курсе</h4><p>${c.desc}</p></div>
+        <div class="cm-section"><h4>Чему вы научитесь</h4>${c.outcomes.map(o=>`<div class="outcome-item"><div class="outcome-dot">✓</div><span>${o}</span></div>`).join('')}</div>
+        <div class="cm-section"><h4>Программа курса</h4>${c.program.map(m=>`<div class="prog-pill"><div class="prog-n">${m.n}</div><span style="flex:1;font-weight:600">${m.name}</span><span style="font-size:13px;color:var(--text-muted)">${m.meta}</span></div>`).join('')}</div>
+        <div class="cm-enroll"><div><b>Готовы начать?</b><p>Войдите на платформу и запишитесь</p></div><a href="register.html" class="btn btn-primary">Записаться →</a></div>
+      </div>`;
+      document.getElementById('courseOverlay').classList.add('open');
+      box.scrollTop=0;
+    }
+    function closeCourseModal(e) { if(e.target===document.getElementById('courseOverlay')) document.getElementById('courseOverlay').classList.remove('open'); }
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.getElementById('courseOverlay').classList.remove('open'); });
+  </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход — КазНУ ЦДПО</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .field-error { font-size: 13px; color: var(--danger); margin-top: 6px; display: none; font-weight: 500; }
+    .form-control.is-error { border-color: var(--danger); box-shadow: 0 0 0 4px rgba(239,68,68,0.1); }
+    .form-control.is-ok   { border-color: var(--success); }
+  </style>
+</head>
+<body class="login-page" data-page="login">
+  <div class="login-container">
+
+    <div class="login-left">
+      <div class="login-logo">
+        <div class="logo-icon">⚡</div>
+        <span>КазНУ ЦДПО</span>
+      </div>
+      <h2>Будущее образования начинается здесь</h2>
+      <p>Войдите в свою персональную панель обучения и начните работу прямо сейчас.</p>
+      <div class="login-features">
+        <div class="lf-item"><div class="lf-icon">📖</div><span>Персональная панель для преподавателей и студентов</span></div>
+        <div class="lf-item"><div class="lf-icon">📊</div><span>Отслеживание прогресса и аналитика в реальном времени</span></div>
+        <div class="lf-item"><div class="lf-icon">📝</div><span>Задания, тесты и управление оценками</span></div>
+        <div class="lf-item"><div class="lf-icon">📱</div><span>Адаптивный дизайн для всех устройств</span></div>
+      </div>
+    </div>
+
+    <div class="login-right">
+      <h3>Добро пожаловать 👋</h3>
+      <p>Войдите через ваш логин вида <b>Фамилия_Имя</b></p>
+
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label class="form-label">Логин (Фамилия_Имя)</label>
+          <input type="text" id="loginInput" class="form-control"
+            placeholder="Фамилия_Имя" autocomplete="username">
+          <div class="field-error" id="loginError"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Пароль</label>
+          <input type="password" id="passwordInput" class="form-control"
+            placeholder="Минимум 6 символов" autocomplete="current-password">
+          <div class="field-error" id="passwordError"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Я являюсь</label>
+          <div class="role-selector">
+            <button type="button" class="role-btn active" data-role="student">
+              <div style="font-size:22px;margin-bottom:6px">🎓</div>
+              Студент
+            </button>
+            <button type="button" class="role-btn" data-role="teacher">
+              <div style="font-size:22px;margin-bottom:6px">👨‍🏫</div>
+              Преподаватель
+            </button>
+          </div>
+        </div>
+        <button type="submit" class="login-btn">Войти →</button>
+      </form>
+
+      <div style="text-align:center;margin-top:14px">
+        <a href="#" onclick="openForgotPassword();return false" style="font-size:13px;color:var(--text-muted)">Забыли пароль?</a>
+      </div>
+
+      <div style="text-align:center;margin-top:20px;font-size:15px;color:var(--text-secondary)">
+        Нет аккаунта?
+        <a href="register.html" style="color:var(--accent);font-weight:700">Зарегистрироваться</a>
+      </div>
+      <div style="text-align:center;margin-top:10px">
+        <a href="index.html" style="font-size:14px;color:var(--text-muted)">← На главную</a>
+      </div>
+    </div>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>
